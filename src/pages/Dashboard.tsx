@@ -108,21 +108,9 @@ const UserOverviewTab = ({ dailyEngagementData }: UserOverviewTabProps) => {
 };
 
 const TokenUsageTab = () => {
-  const [activeSubTab, setActiveSubTab] = useState('tokens-sub');
-
   return (
     <div className="space-y-6">
       <TotalUsersCard totalUsers={totalUsersOverview} />
-      
-      <DashboardTabs 
-        tabs={[
-          { id: 'users-sub', label: 'จำนวนผู้ใช้งาน' },
-          { id: 'tokens-sub', label: 'จำนวนการใช้งานโทเคน' },
-        ]}
-        activeTab={activeSubTab}
-        onTabChange={setActiveSubTab}
-      />
-      
       <OccupationTable data={occupationData} />
     </div>
   );
