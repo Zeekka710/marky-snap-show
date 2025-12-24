@@ -8,7 +8,6 @@ export const summaryMetrics: MetricCard[] = [
     change_direction: 'up',
     previous_period_value: 3419873,
     tooltip: 'จำนวนผู้ใช้ที่ลงทะเบียนทั้งหมดในระบบ',
-    sparkline_data: [2800000, 2950000, 3100000, 3200000, 3350000, 3500024],
     color: 'blue',
   },
   {
@@ -18,7 +17,6 @@ export const summaryMetrics: MetricCard[] = [
     change_direction: 'up',
     previous_period_value: 53977,
     tooltip: 'จำนวนผู้ใช้ใหม่ในช่วงเวลาที่เลือก',
-    sparkline_data: [42000, 45000, 48000, 51000, 53000, 55024],
     color: 'yellow',
   },
 ];
