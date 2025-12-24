@@ -19,7 +19,11 @@ import {
   ageDistributionData,
   occupationDistributionData,
   totalUsersOverview,
+  tokenByFeatureData,
+  tokenByModelData,
+  totalTokens,
 } from '@/data/mockDashboardData';
+import TokenDonutCharts, { TokenByFeatureData, TokenByModelData } from '@/components/dashboard/TokenDonutCharts';
 
 // Generate mock daily data based on date range and filters
 const generateDailyData = (dateRange: DateRange | undefined, filters: FilterValues): DailyEngagementData[] => {
@@ -255,6 +259,9 @@ const Dashboard = () => {
           <TokenUsageTab 
             totalUsers={filteredTotalUsers}
             occupationData={filteredOccupationData}
+            featureData={tokenByFeatureData}
+            modelData={tokenByModelData}
+            totalTokens={totalTokens}
           />
         )}
       </main>
@@ -307,11 +314,19 @@ const UserOverviewTab = ({
 interface TokenUsageTabProps {
   totalUsers: number;
   occupationData: OccupationData[];
+  featureData: TokenByFeatureData[];
+  modelData: TokenByModelData[];
+  totalTokens: number;
 }
 
-const TokenUsageTab = ({ totalUsers, occupationData: occData }: TokenUsageTabProps) => {
+const TokenUsageTab = ({ totalUsers, occupationData: occData, featureData, modelData, totalTokens: tokens }: TokenUsageTabProps) => {
   return (
     <div className="space-y-6">
+      <TokenDonutCharts 
+        featureData={featureData}
+        modelData={modelData}
+        totalTokens={tokens}
+      />
       <TotalUsersCard totalUsers={totalUsers} />
       <OccupationTable data={occData} />
     </div>

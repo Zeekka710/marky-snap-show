@@ -94,3 +94,21 @@ export const occupationDistributionData: OccupationDistributionData[] = [
 ];
 
 export const totalUsersOverview = 24000000;
+
+export const tokenByFeatureData = [
+  { name: 'ข้อความ', value: 300900000, color: 'hsl(217, 91%, 30%)' },
+  { name: 'รูปภาพ', value: 150450000, color: 'hsl(217, 91%, 50%)' },
+  { name: 'วิดีโอ', value: 50150000, color: 'hsl(217, 91%, 70%)' },
+];
+
+export const tokenByModelData = [
+  { name: 'Gemini-2.5 Pro', value: 125375000, color: 'hsl(217, 91%, 25%)' },
+  { name: 'Gemini-2.5 Flash', value: 100300000, color: 'hsl(217, 91%, 35%)' },
+  { name: 'GPT-5', value: 85255000, color: 'hsl(217, 91%, 45%)' },
+  { name: 'Claude-3', value: 75225000, color: 'hsl(217, 91%, 55%)' },
+  { name: 'Sonar', value: 55165000, color: 'hsl(217, 91%, 65%)' },
+  { name: 'Grok-1', value: 35105000, color: 'hsl(217, 91%, 75%)' },
+  { name: 'อื่นๆ', value: 25075000, color: 'hsl(217, 91%, 85%)' },
+];
+
+export const totalTokens = 501500000;
