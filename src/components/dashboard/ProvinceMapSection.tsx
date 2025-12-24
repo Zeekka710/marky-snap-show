@@ -27,12 +27,25 @@ interface ProvinceMapSectionProps {
 const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [userType, setUserType] = useState('registered');
   
-  const maxValue = Math.max(...Object.values(provinceDataMap));
-  const minValue = Math.min(...Object.values(provinceDataMap));
+  // Apply multiplier based on user type filter
+  const getFilteredValue = (value: number) => {
+    if (userType === 'active') {
+      return Math.round(value * 0.72); // Active users are ~72% of registered
+    }
+    return value;
+  };
+
+  const filteredProvinceDataMap = Object.fromEntries(
+    Object.entries(provinceDataMap).map(([name, value]) => [name, getFilteredValue(value)])
+  );
+  
+  const maxValue = Math.max(...Object.values(filteredProvinceDataMap));
+  const minValue = Math.min(...Object.values(filteredProvinceDataMap));
 
   // Get all provinces sorted by value
-  const allProvinces = Object.entries(provinceDataMap)
+  const allProvinces = Object.entries(filteredProvinceDataMap)
     .map(([name, value], index) => ({
       rank: index + 1,
       name,
@@ -54,7 +67,7 @@ const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-foreground">ภาพรวมผู้ใช้งานรายจังหวัด</h3>
         <div className="flex items-center gap-3">
-          <Select defaultValue="registered">
+          <Select value={userType} onValueChange={setUserType}>
             <SelectTrigger className="w-[220px]">
               <span className="text-muted-foreground">ภาพรวมผู้ใช้งาน:</span>
               <SelectValue />
@@ -97,18 +110,18 @@ const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
         </div>
 
         {/* Top 10 Rankings */}
-        <div>
-          <h4 className="text-base font-semibold text-foreground mb-4">10 อันดับสูงสุด</h4>
-          <div className="space-y-3">
-            {provinces.slice(0, 10).map((province) => (
-              <div key={province.rank} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                <span className="text-sm text-foreground">
-                  {province.rank}. {province.name}
-                </span>
-                <span className="text-sm font-medium text-foreground tabular-nums">
-                  {province.value.toLocaleString('th-TH')}
-                </span>
-              </div>
+          <div>
+            <h4 className="text-base font-semibold text-foreground mb-4">10 อันดับสูงสุด</h4>
+            <div className="space-y-3">
+              {allProvinces.slice(0, 10).map((province) => (
+                <div key={province.rank} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+                  <span className="text-sm text-foreground">
+                    {province.rank}. {province.name}
+                  </span>
+                  <span className="text-sm font-medium text-foreground tabular-nums">
+                    {province.value.toLocaleString('th-TH')}
+                  </span>
+                </div>
             ))}
           </div>
         </div>
