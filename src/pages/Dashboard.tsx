@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { DateRange } from 'react-day-picker';
+import { subMonths, eachDayOfInterval, format } from 'date-fns';
+import { th } from 'date-fns/locale';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import FilterBar from '@/components/dashboard/FilterBar';
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
@@ -8,15 +11,30 @@ import ProvinceMapSection from '@/components/dashboard/ProvinceMapSection';
 import DemographicsCharts from '@/components/dashboard/DemographicsCharts';
 import OccupationTable from '@/components/dashboard/OccupationTable';
 import EngagementChart from '@/components/dashboard/EngagementChart';
+import { DailyEngagementData } from '@/types/dashboard';
 import {
   summaryMetrics,
-  dailyEngagementData,
   provinceData,
   occupationData,
   ageDistributionData,
   occupationDistributionData,
   totalUsersOverview,
 } from '@/data/mockDashboardData';
+
+// Generate mock daily data based on date range
+const generateDailyData = (dateRange: DateRange | undefined): DailyEngagementData[] => {
+  if (!dateRange?.from || !dateRange?.to) return [];
+  
+  const days = eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
+  
+  return days.map((day) => ({
+    date: format(day, 'd MMM', { locale: th }),
+    activeUsers: Math.floor(70000 + Math.random() * 40000),
+    active1Day: 22 + Math.random() * 6,
+    active7Day: 33 + Math.random() * 8,
+    active30Day: 60 + Math.random() * 10,
+  }));
+};
 
 const tabs = [
   { id: 'users', label: 'จำนวนผู้ใช้งาน' },
@@ -25,6 +43,12 @@ const tabs = [
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('users');
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subMonths(new Date(), 1),
+    to: new Date(),
+  });
+
+  const dailyEngagementData = useMemo(() => generateDailyData(dateRange), [dateRange]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,7 +57,7 @@ const Dashboard = () => {
       <main className="ml-64 p-8">
         <h1 className="text-2xl font-bold text-foreground mb-6">แดชบอร์ด</h1>
         
-        <FilterBar />
+        <FilterBar onDateRangeChange={setDateRange} />
         
         <DashboardTabs 
           tabs={tabs} 
@@ -42,7 +66,7 @@ const Dashboard = () => {
         />
 
         {activeTab === 'users' ? (
-          <UserOverviewTab />
+          <UserOverviewTab dailyEngagementData={dailyEngagementData} />
         ) : (
           <TokenUsageTab />
         )}
@@ -51,7 +75,11 @@ const Dashboard = () => {
   );
 };
 
-const UserOverviewTab = () => {
+interface UserOverviewTabProps {
+  dailyEngagementData: DailyEngagementData[];
+}
+
+const UserOverviewTab = ({ dailyEngagementData }: UserOverviewTabProps) => {
   return (
     <div className="space-y-6">
       {/* Summary Metrics Section */}
