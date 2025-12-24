@@ -322,12 +322,12 @@ interface TokenUsageTabProps {
 const TokenUsageTab = ({ totalUsers, occupationData: occData, featureData, modelData, totalTokens: tokens }: TokenUsageTabProps) => {
   return (
     <div className="space-y-6">
+      <TotalUsersCard totalUsers={totalUsers} />
       <TokenDonutCharts 
         featureData={featureData}
         modelData={modelData}
         totalTokens={tokens}
       />
-      <TotalUsersCard totalUsers={totalUsers} />
       <OccupationTable data={occData} />
     </div>
   );

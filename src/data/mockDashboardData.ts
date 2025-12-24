@@ -93,7 +93,7 @@ export const occupationDistributionData: OccupationDistributionData[] = [
   { occupation: 'เจ้าหน้าที่\nสำนักงาน...', registeredUsers: 15000, activePercentage: 48 },
 ];
 
-export const totalUsersOverview = 24000000;
+export const totalUsersOverview = 3500024;
 
 export const tokenByFeatureData = [
   { name: 'ข้อความ', value: 300900000, color: 'hsl(217, 91%, 30%)' },
