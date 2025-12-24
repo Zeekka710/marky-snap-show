@@ -7,6 +7,7 @@ import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface ThailandMapProps {
   onProvinceClick?: (province: string, value: number) => void;
+  provinceData?: Record<string, number>;
 }
 
 // Province code to Thai name mapping
@@ -91,7 +92,7 @@ const provinceCodeToName: Record<string, string> = {
   'th-nb': 'นราธิวาส',
 };
 
-const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
+const ThailandMap = ({ onProvinceClick, provinceData }: ThailandMapProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
@@ -108,18 +109,19 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentZoom, setCurrentZoom] = useState(1);
 
-  const maxValue = Math.max(...Object.values(provinceDataMap));
-  const minValue = Math.min(...Object.values(provinceDataMap));
+  const dataMap = provinceData || provinceDataMap;
+  const maxValue = Math.max(...Object.values(dataMap));
+  const minValue = Math.min(...Object.values(dataMap));
 
   const getProvinceColor = useCallback((provinceName: string) => {
-    const value = provinceDataMap[provinceName] || 0;
+    const value = dataMap[provinceName] || 0;
     if (value === 0) return 'hsl(217, 91%, 92%)';
     
     const normalized = (value - minValue) / (maxValue - minValue);
     const lightness = 85 - (normalized * 52);
     
     return `hsl(217, 91%, ${lightness}%)`;
-  }, [minValue, maxValue]);
+  }, [dataMap, minValue, maxValue]);
 
   // Zoom controls
   const handleZoomIn = useCallback(() => {
@@ -212,7 +214,7 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
           .on('mouseenter', function(event: MouseEvent, d: any) {
             const code = d.properties['hc-key'];
             const thaiName = provinceCodeToName[code] || d.properties.name;
-            const value = provinceDataMap[thaiName] || 0;
+            const value = dataMap[thaiName] || 0;
             
             d3.select(this).attr('fill', 'hsl(217, 91%, 45%)');
             setHoveredProvince(thaiName);
@@ -245,7 +247,7 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
             event.stopPropagation();
             const code = d.properties['hc-key'];
             const thaiName = provinceCodeToName[code] || d.properties.name;
-            const value = provinceDataMap[thaiName] || 0;
+            const value = dataMap[thaiName] || 0;
             
             const rect = containerRef.current?.getBoundingClientRect();
             if (rect) {
@@ -275,7 +277,7 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [onProvinceClick, getProvinceColor]);
+  }, [onProvinceClick, getProvinceColor, dataMap]);
 
   return (
     <div ref={containerRef} className="relative w-full h-[400px]">
