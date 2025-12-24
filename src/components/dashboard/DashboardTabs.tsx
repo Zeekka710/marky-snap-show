@@ -13,8 +13,6 @@ const DashboardTabs = ({
   activeTab,
   onTabChange
 }: DashboardTabsProps) => {
-  return <div className="flex border-b border-border mb-6">
-      {tabs.map(tab => {})}
-    </div>;
+  return;
 };
 export default DashboardTabs;
