@@ -92,20 +92,13 @@ const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
           <ThailandMap provinceData={filteredProvinceDataMap} />
           
           {/* Legend */}
-          <div className="absolute bottom-4 left-4 flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-xs">
-              <div className="w-8 h-3 rounded" style={{ backgroundColor: 'hsl(217, 91%, 23%)' }} />
-              <span className="text-muted-foreground">{maxValue.toLocaleString('th-TH')}</span>
-            </div>
+          <div className="absolute bottom-4 left-4">
             <div 
-              className="w-8 h-32 rounded" 
+              className="w-3 h-32 rounded" 
               style={{ 
                 background: 'linear-gradient(to bottom, hsl(217, 91%, 23%), hsl(217, 91%, 83%))' 
               }} 
             />
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-muted-foreground">{minValue.toLocaleString('th-TH')}</span>
-            </div>
           </div>
         </div>
 
