@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 import { provinceDataMap } from '@/data/thailandGeoData';
+import { Button } from '@/components/ui/button';
+import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface ThailandMapProps {
   onProvinceClick?: (province: string, value: number) => void;
@@ -92,6 +94,9 @@ const provinceCodeToName: Record<string, string> = {
 const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const gRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
+  
   const [selectedProvince, setSelectedProvince] = useState<{
     name: string;
     value: number;
@@ -101,11 +106,12 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [isLoading, setIsLoading] = useState(true);
+  const [currentZoom, setCurrentZoom] = useState(1);
 
   const maxValue = Math.max(...Object.values(provinceDataMap));
   const minValue = Math.min(...Object.values(provinceDataMap));
 
-  const getProvinceColor = (provinceName: string) => {
+  const getProvinceColor = useCallback((provinceName: string) => {
     const value = provinceDataMap[provinceName] || 0;
     if (value === 0) return 'hsl(217, 91%, 92%)';
     
@@ -113,7 +119,35 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
     const lightness = 85 - (normalized * 52);
     
     return `hsl(217, 91%, ${lightness}%)`;
-  };
+  }, [minValue, maxValue]);
+
+  // Zoom controls
+  const handleZoomIn = useCallback(() => {
+    if (svgRef.current && zoomRef.current) {
+      d3.select(svgRef.current)
+        .transition()
+        .duration(300)
+        .call(zoomRef.current.scaleBy, 1.5);
+    }
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    if (svgRef.current && zoomRef.current) {
+      d3.select(svgRef.current)
+        .transition()
+        .duration(300)
+        .call(zoomRef.current.scaleBy, 0.67);
+    }
+  }, []);
+
+  const handleReset = useCallback(() => {
+    if (svgRef.current && zoomRef.current) {
+      d3.select(svgRef.current)
+        .transition()
+        .duration(300)
+        .call(zoomRef.current.transform, d3.zoomIdentity);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchAndRenderMap = async () => {
@@ -131,6 +165,10 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
         const containerWidth = containerRef.current.clientWidth;
         const containerHeight = 400;
 
+        // Create a group for zoomable content
+        const g = svg.append('g');
+        gRef.current = g;
+
         // Extract GeoJSON features from TopoJSON
         const geojson = topojson.feature(topology, topology.objects.default) as any;
 
@@ -140,9 +178,24 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
 
         const path = d3.geoPath().projection(projection);
 
+        // Create zoom behavior
+        const zoom = d3.zoom<SVGSVGElement, unknown>()
+          .scaleExtent([1, 8])
+          .translateExtent([[0, 0], [containerWidth, containerHeight]])
+          .on('zoom', (event) => {
+            g.attr('transform', event.transform);
+            setCurrentZoom(event.transform.k);
+            // Adjust stroke width based on zoom level
+            g.selectAll('path').attr('stroke-width', 0.5 / event.transform.k);
+          });
+
+        zoomRef.current = zoom;
+
+        // Apply zoom behavior to SVG
+        svg.call(zoom);
+
         // Draw provinces
-        svg
-          .selectAll('path')
+        g.selectAll('path')
           .data(geojson.features)
           .enter()
           .append('path')
@@ -189,6 +242,7 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
             setHoveredProvince(null);
           })
           .on('click', function(event: MouseEvent, d: any) {
+            event.stopPropagation();
             const code = d.properties['hc-key'];
             const thaiName = provinceCodeToName[code] || d.properties.name;
             const value = provinceDataMap[thaiName] || 0;
@@ -221,7 +275,7 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [onProvinceClick]);
+  }, [onProvinceClick, getProvinceColor]);
 
   return (
     <div ref={containerRef} className="relative w-full h-[400px]">
@@ -230,12 +284,48 @@ const ThailandMap = ({ onProvinceClick }: ThailandMapProps) => {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       )}
+
+      {/* Zoom Controls */}
+      <div className="absolute top-2 right-2 z-20 flex flex-col gap-1">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-card/90 backdrop-blur-sm"
+          onClick={handleZoomIn}
+          title="ซูมเข้า"
+        >
+          <ZoomIn className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-card/90 backdrop-blur-sm"
+          onClick={handleZoomOut}
+          title="ซูมออก"
+        >
+          <ZoomOut className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-card/90 backdrop-blur-sm"
+          onClick={handleReset}
+          title="รีเซ็ต"
+        >
+          <RotateCcw className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Zoom indicator */}
+      <div className="absolute bottom-2 right-2 z-20 bg-card/90 backdrop-blur-sm rounded px-2 py-1 text-xs text-muted-foreground">
+        {Math.round(currentZoom * 100)}%
+      </div>
       
       <svg 
         ref={svgRef} 
         width="100%" 
         height="400"
-        className="w-full"
+        className="w-full cursor-grab active:cursor-grabbing"
       />
 
       {/* Hover tooltip */}
