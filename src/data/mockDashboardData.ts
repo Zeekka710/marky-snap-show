@@ -96,9 +96,13 @@ export const occupationDistributionData: OccupationDistributionData[] = [
 export const totalUsersOverview = 3500024;
 
 export const tokenByFeatureData = [
-  { name: 'ข้อความ', value: 300900000, color: 'hsl(217, 91%, 30%)' },
-  { name: 'รูปภาพ', value: 150450000, color: 'hsl(217, 91%, 50%)' },
-  { name: 'วิดีโอ', value: 50150000, color: 'hsl(217, 91%, 70%)' },
+  { name: 'แชท', value: 300900000, color: 'hsl(217, 91%, 30%)' },
+  { name: 'ลบประวัติแชท', value: 50450000, color: 'hsl(217, 91%, 40%)' },
+  { name: 'แชทชั่วคราว', value: 75225000, color: 'hsl(217, 91%, 50%)' },
+  { name: 'สร้างเอกสาร', value: 45612500, color: 'hsl(217, 91%, 55%)' },
+  { name: 'สร้างรูปภาพ', value: 38500000, color: 'hsl(217, 91%, 60%)' },
+  { name: 'สร้างข้อความเสียง', value: 25300000, color: 'hsl(217, 91%, 70%)' },
+  { name: 'ข่าวสาร', value: 18200000, color: 'hsl(217, 91%, 80%)' },
 ];
 
 export const tokenByModelData = [
