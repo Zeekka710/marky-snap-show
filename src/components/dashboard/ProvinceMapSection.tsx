@@ -59,8 +59,8 @@ const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
     province.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Calculate total users
-  const totalUsers = Object.values(provinceDataMap).reduce((sum, val) => sum + val, 0);
+  // Calculate total users based on filtered data
+  const totalUsers = Object.values(filteredProvinceDataMap).reduce((sum, val) => sum + val, 0);
 
   return (
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm animate-fade-in">
@@ -89,7 +89,7 @@ const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Interactive Map */}
         <div className="relative">
-          <ThailandMap />
+          <ThailandMap provinceData={filteredProvinceDataMap} />
           
           {/* Legend */}
           <div className="absolute bottom-4 left-4 flex flex-col gap-1">
