@@ -210,7 +210,7 @@ const ThailandMap = ({ onProvinceClick, provinceData }: ThailandMapProps) => {
           .attr('stroke', 'hsl(var(--card))')
           .attr('stroke-width', 0.5)
           .attr('cursor', 'pointer')
-          .attr('class', 'transition-colors duration-150')
+          .style('transition', 'fill 0.5s ease-in-out')
           .on('mouseenter', function(event: MouseEvent, d: any) {
             const code = d.properties['hc-key'];
             const thaiName = provinceCodeToName[code] || d.properties.name;
@@ -277,7 +277,21 @@ const ThailandMap = ({ onProvinceClick, provinceData }: ThailandMapProps) => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [onProvinceClick, getProvinceColor, dataMap]);
+  }, [onProvinceClick]);
+
+  // Update colors when data changes with smooth transition
+  useEffect(() => {
+    if (gRef.current) {
+      gRef.current.selectAll('path')
+        .transition()
+        .duration(500)
+        .attr('fill', (d: any) => {
+          const code = d.properties?.['hc-key'];
+          const thaiName = provinceCodeToName[code] || d.properties?.name;
+          return getProvinceColor(thaiName);
+        });
+    }
+  }, [dataMap, getProvinceColor]);
 
   return (
     <div ref={containerRef} className="relative w-full h-[400px]">
