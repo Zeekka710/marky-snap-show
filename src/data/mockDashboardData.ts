@@ -1,4 +1,4 @@
-import { MetricCard, ProvinceData, OccupationData, AgeDistributionData, OccupationDistributionData } from '@/types/dashboard';
+import { MetricCard, ProvinceData, OccupationData, AgeDistributionData, OccupationDistributionData, DailyEngagementData } from '@/types/dashboard';
 
 export const summaryMetrics: MetricCard[] = [
   {
@@ -21,37 +21,14 @@ export const summaryMetrics: MetricCard[] = [
   },
 ];
 
-export const engagementMetrics: MetricCard[] = [
-  {
-    metric_name: '% เฉลี่ยผู้ใช้งานในช่วง 1 วัน',
-    value: 25.6,
-    change_percentage: 0.31,
-    change_direction: 'up',
-    previous_period_value: 25.52,
-    tooltip: 'เปอร์เซ็นต์ผู้ใช้งานที่ active ในช่วง 1 วัน',
-    sparkline_data: [22, 23, 24, 24.5, 25, 25.6],
-    color: 'orange',
-  },
-  {
-    metric_name: '% เฉลี่ยผู้ใช้งานในช่วง 7 วัน',
-    value: 37.5,
-    change_percentage: 2.45,
-    change_direction: 'up',
-    previous_period_value: 36.6,
-    tooltip: 'เปอร์เซ็นต์ผู้ใช้งานที่ active ในช่วง 7 วัน',
-    sparkline_data: [32, 33.5, 35, 36, 36.8, 37.5],
-    color: 'green',
-  },
-  {
-    metric_name: '% เฉลี่ยผู้ใช้งานในช่วง 30 วัน',
-    value: 65.7,
-    change_percentage: -10.99,
-    change_direction: 'down',
-    previous_period_value: 73.81,
-    tooltip: 'เปอร์เซ็นต์ผู้ใช้งานที่ active ในช่วง 30 วัน',
-    sparkline_data: [72, 70, 68, 67, 66, 65.7],
-    color: 'purple',
-  },
+export const dailyEngagementData: DailyEngagementData[] = [
+  { date: '1 ธ.ค.', activeUsers: 85000, active1Day: 24.2, active7Day: 35.1, active30Day: 68.5 },
+  { date: '2 ธ.ค.', activeUsers: 92000, active1Day: 24.8, active7Day: 35.8, active30Day: 67.8 },
+  { date: '3 ธ.ค.', activeUsers: 78000, active1Day: 23.5, active7Day: 36.2, active30Day: 67.2 },
+  { date: '4 ธ.ค.', activeUsers: 95000, active1Day: 25.1, active7Day: 36.5, active30Day: 66.8 },
+  { date: '5 ธ.ค.', activeUsers: 88000, active1Day: 24.9, active7Day: 36.8, active30Day: 66.5 },
+  { date: '6 ธ.ค.', activeUsers: 102000, active1Day: 25.3, active7Day: 37.0, active30Day: 66.2 },
+  { date: '7 ธ.ค.', activeUsers: 98000, active1Day: 25.6, active7Day: 37.5, active30Day: 65.7 },
 ];
 
 export const provinceData: ProvinceData[] = [

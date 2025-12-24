@@ -7,9 +7,10 @@ import TotalUsersCard from '@/components/dashboard/TotalUsersCard';
 import ProvinceMapSection from '@/components/dashboard/ProvinceMapSection';
 import DemographicsCharts from '@/components/dashboard/DemographicsCharts';
 import OccupationTable from '@/components/dashboard/OccupationTable';
+import EngagementChart from '@/components/dashboard/EngagementChart';
 import {
   summaryMetrics,
-  engagementMetrics,
+  dailyEngagementData,
   provinceData,
   occupationData,
   ageDistributionData,
@@ -63,14 +64,8 @@ const UserOverviewTab = () => {
         </div>
       </section>
 
-      {/* Engagement Metrics */}
-      <section>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {engagementMetrics.map((metric) => (
-            <MetricCard key={metric.metric_name} metric={metric} />
-          ))}
-        </div>
-      </section>
+      {/* Engagement Chart */}
+      <EngagementChart data={dailyEngagementData} />
 
       {/* Province Map Section */}
       <ProvinceMapSection provinces={provinceData} />
