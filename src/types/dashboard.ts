@@ -45,3 +45,11 @@ export interface OccupationDistributionData {
   registeredUsers: number;
   activePercentage: number;
 }
+
+export interface DailyEngagementData {
+  date: string;
+  activeUsers: number;
+  active1Day: number;
+  active7Day: number;
+  active30Day: number;
+}
