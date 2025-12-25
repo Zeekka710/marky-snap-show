@@ -17,6 +17,7 @@ interface TokenDonutChartsProps {
   featureData: TokenByFeatureData[];
   modelData: TokenByModelData[];
   totalTokens: number;
+  unit?: 'tokens' | 'users';
 }
 
 const formatNumber = (num: number): string => {
@@ -35,12 +36,16 @@ const formatNumber = (num: number): string => {
 const DonutChart = ({ 
   data, 
   title, 
-  totalTokens 
+  totalValue,
+  unit = 'tokens'
 }: { 
   data: { name: string; value: number; color: string }[]; 
   title: string;
-  totalTokens: number;
+  totalValue: number;
+  unit?: 'tokens' | 'users';
 }) => {
+  const unitLabel = unit === 'tokens' ? 'Tokens' : 'ผู้ใช้งาน';
+  
   return (
     <Card className="bg-card">
       <CardHeader className="pb-2">
@@ -65,7 +70,7 @@ const DonutChart = ({
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value: number) => [formatNumber(value), 'Tokens']}
+                  formatter={(value: number) => [formatNumber(value), unitLabel]}
                   contentStyle={{ 
                     backgroundColor: 'hsl(var(--card))', 
                     border: '1px solid hsl(var(--border))',
@@ -77,7 +82,7 @@ const DonutChart = ({
             {/* Center text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <span className="text-sm text-muted-foreground">ทั้งหมด</span>
-              <span className="text-2xl font-bold text-primary">{formatNumber(totalTokens)}</span>
+              <span className="text-2xl font-bold text-primary">{formatNumber(totalValue)}</span>
             </div>
           </div>
           
@@ -99,18 +104,23 @@ const DonutChart = ({
   );
 };
 
-const TokenDonutCharts = ({ featureData, modelData, totalTokens }: TokenDonutChartsProps) => {
+const TokenDonutCharts = ({ featureData, modelData, totalTokens, unit = 'tokens' }: TokenDonutChartsProps) => {
+  const featureTitle = unit === 'tokens' ? 'จำนวนโทเคนตามฟีเจอร์การใช้งาน' : 'จำนวนผู้ใช้งานตามฟีเจอร์';
+  const modelTitle = unit === 'tokens' ? 'จำนวนโทเคนตามโมเดล' : 'จำนวนผู้ใช้งานตามโมเดล';
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <DonutChart 
         data={featureData} 
-        title="จำนวนโทเคนตามฟีเจอร์การใช้งาน" 
-        totalTokens={totalTokens}
+        title={featureTitle} 
+        totalValue={totalTokens}
+        unit={unit}
       />
       <DonutChart 
         data={modelData} 
-        title="จำนวนโทเคนตามโมเดล" 
-        totalTokens={totalTokens}
+        title={modelTitle} 
+        totalValue={totalTokens}
+        unit={unit}
       />
     </div>
   );

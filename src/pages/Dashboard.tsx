@@ -22,9 +22,9 @@ import {
   ageDistributionData,
   occupationDistributionData,
   totalUsersOverview,
-  tokenByFeatureData,
-  tokenByModelData,
-  totalTokens,
+  usersByFeatureData,
+  usersByModelData,
+  totalUsersByUsage,
 } from '@/data/mockDashboardData';
 import TokenDonutCharts, { TokenByFeatureData, TokenByModelData } from '@/components/dashboard/TokenDonutCharts';
 
@@ -273,9 +273,9 @@ const Dashboard = () => {
           <TokenUsageTab 
             totalUsers={filteredTotalUsers}
             occupationData={filteredOccupationData}
-            featureData={tokenByFeatureData}
-            modelData={tokenByModelData}
-            totalTokens={totalTokens}
+            featureData={usersByFeatureData}
+            modelData={usersByModelData}
+            totalUsers2={totalUsersByUsage}
           />
         )}
       </main>
@@ -330,17 +330,18 @@ interface TokenUsageTabProps {
   occupationData: OccupationData[];
   featureData: TokenByFeatureData[];
   modelData: TokenByModelData[];
-  totalTokens: number;
+  totalUsers2: number;
 }
 
-const TokenUsageTab = ({ totalUsers, occupationData: occData, featureData, modelData, totalTokens: tokens }: TokenUsageTabProps) => {
+const TokenUsageTab = ({ totalUsers, occupationData: occData, featureData, modelData, totalUsers2 }: TokenUsageTabProps) => {
   return (
     <div className="space-y-6">
       <TotalUsersCard totalUsers={totalUsers} />
       <TokenDonutCharts 
         featureData={featureData}
         modelData={modelData}
-        totalTokens={tokens}
+        totalTokens={totalUsers2}
+        unit="users"
       />
       <OccupationTable data={occData} />
     </div>
