@@ -15,15 +15,19 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import TokenDonutCharts from '@/components/dashboard/TokenDonutCharts';
 import {
   tokenByOccupationData,
-  featureTokenData,
-  totalTokensUsed,
   modelOptions,
   featureOptions,
 } from '@/data/costManagementData';
+import {
+  tokenByFeatureData,
+  tokenByModelData,
+  totalTokens,
+  totalUsersOverview,
+} from '@/data/mockDashboardData';
 
 const CostManagement = () => {
   const navigate = useNavigate();
@@ -125,18 +129,31 @@ const CostManagement = () => {
           </div>
         </Card>
 
-        {/* Total Tokens Card */}
-        <Card className="p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">จำนวนโทเคนที่ถูกใช้งานทั้งหมด</p>
-              <p className="text-3xl font-bold text-foreground">{formatNumber(totalTokensUsed)}</p>
+        {/* Total Tokens and Users Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">จำนวนโทเคนที่ถูกใช้งานทั้งหมด</p>
+                <p className="text-3xl font-bold text-foreground">{formatNumber(totalTokens)}</p>
+              </div>
+              <Button variant="outline" size="icon" className="rounded-full">
+                <Eye className="h-5 w-5 text-primary" />
+              </Button>
             </div>
-            <Button variant="outline" size="icon" className="rounded-full">
-              <Eye className="h-5 w-5 text-primary" />
-            </Button>
-          </div>
-        </Card>
+          </Card>
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">จำนวนผู้ใช้งาน (บัญชี)</p>
+                <p className="text-3xl font-bold text-foreground">{formatNumber(totalUsersOverview)}</p>
+              </div>
+              <Button variant="outline" size="icon" className="rounded-full">
+                <Eye className="h-5 w-5 text-primary" />
+              </Button>
+            </div>
+          </Card>
+        </div>
 
         {/* Tabs */}
         <div className="flex border-b border-border mb-6">
@@ -252,46 +269,11 @@ const CostManagement = () => {
             </div>
           </Card>
         ) : (
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-foreground mb-6">
-              จำนวนโทเคนที่ถูกใช้งานแยกตามฟีเจอร์
-            </h3>
-            <div className="h-[500px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={featureTokenData}
-                  layout="vertical"
-                  margin={{ top: 0, right: 30, left: 80, bottom: 30 }}
-                >
-                  <XAxis
-                    type="number"
-                    tickFormatter={(value) => `${(value / 1000000).toFixed(0)}`}
-                    domain={[0, 10000000]}
-                    ticks={[0, 2000000, 4000000, 6000000, 8000000, 10000000]}
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                  />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
-                    width={80}
-                  />
-                  <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
-                    {featureTokenData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill="hsl(var(--primary))" />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-              <div className="text-center text-sm text-muted-foreground mt-2">
-                โทเคน (ล้าน)
-              </div>
-            </div>
-          </Card>
+          <TokenDonutCharts
+            featureData={tokenByFeatureData}
+            modelData={tokenByModelData}
+            totalTokens={totalTokens}
+          />
         )}
       </main>
     </div>
