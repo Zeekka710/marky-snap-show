@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet, Eye, MoreVertical } from 'lucide-react';
+import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet, Eye, MoreVertical, AlertCircle, CheckCircle2 } from 'lucide-react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,6 +69,7 @@ const AdminManagement = () => {
   const [centralAdmins, setCentralAdmins] = useState<Admin[]>(initialCentralAdmins);
   const [projectAdmins, setProjectAdmins] = useState<Admin[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState('10');
+  const [csvErrors, setCsvErrors] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -78,6 +79,7 @@ const AdminManagement = () => {
     setEmail('');
     setImportedEmails([]);
     setUploadedFileName(null);
+    setCsvErrors([]);
   };
 
   const parseCSV = (content: string): { emails: ImportedEmail[]; errors: string[] } => {
@@ -168,42 +170,29 @@ const AdminManagement = () => {
       const content = e.target?.result as string;
       const { emails, errors } = parseCSV(content);
       
-      // Show errors if any format issues found
+      // Store errors for preview
+      setCsvErrors(errors);
+      setImportedEmails(emails);
+
+      // Show toast summary
       if (errors.length > 0 && emails.length === 0) {
         toast({
           title: 'รูปแบบไฟล์ไม่ถูกต้อง',
-          description: errors.slice(0, 3).join(', ') + (errors.length > 3 ? ` และอีก ${errors.length - 3} ข้อผิดพลาด` : ''),
+          description: 'กรุณาตรวจสอบรายละเอียดข้อผิดพลาดด้านล่าง',
           variant: 'destructive',
         });
-        setUploadedFileName(null);
-        return;
-      }
-
-      if (emails.length === 0) {
+      } else if (errors.length > 0) {
         toast({
-          title: 'ไม่พบอีเมล',
-          description: 'ไม่พบอีเมลที่ถูกต้องในไฟล์',
-          variant: 'destructive',
-        });
-        setUploadedFileName(null);
-        return;
-      }
-
-      // Show warning if some rows had errors but some emails were found
-      if (errors.length > 0) {
-        toast({
-          title: 'นำเข้าบางส่วน',
-          description: `พบ ${emails.length} อีเมล แต่มี ${errors.length} แถวที่มีปัญหา`,
+          title: 'พบข้อผิดพลาดบางส่วน',
+          description: `พบ ${emails.length} อีเมลที่ถูกต้อง และ ${errors.length} ข้อผิดพลาด`,
           variant: 'default',
         });
-      } else {
+      } else if (emails.length > 0) {
         toast({
           title: 'นำเข้าสำเร็จ',
           description: `พบ ${emails.length} อีเมลในไฟล์`,
         });
       }
-
-      setImportedEmails(emails);
     };
     reader.readAsText(file);
   };
@@ -215,6 +204,7 @@ const AdminManagement = () => {
   const handleClearFile = () => {
     setUploadedFileName(null);
     setImportedEmails([]);
+    setCsvErrors([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -542,6 +532,54 @@ const AdminManagement = () => {
                   >
                     <X className="w-4 h-4" />
                   </button>
+                </div>
+              )}
+
+              {/* Error Details Preview */}
+              {(csvErrors.length > 0 || importedEmails.length > 0) && uploadedFileName && (
+                <div className="space-y-3 border border-border rounded-lg p-4 bg-muted/20">
+                  <h4 className="text-sm font-medium text-foreground">ผลการตรวจสอบไฟล์</h4>
+                  
+                  {/* Summary */}
+                  <div className="flex gap-4 text-sm">
+                    {importedEmails.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-green-600">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>อีเมลถูกต้อง: {importedEmails.length} รายการ</span>
+                      </div>
+                    )}
+                    {csvErrors.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-destructive">
+                        <AlertCircle className="w-4 h-4" />
+                        <span>ข้อผิดพลาด: {csvErrors.length} รายการ</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Error List */}
+                  {csvErrors.length > 0 && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">รายละเอียดข้อผิดพลาด:</p>
+                      <div className="max-h-32 overflow-y-auto bg-destructive/5 border border-destructive/20 rounded-md p-2 space-y-1">
+                        {csvErrors.map((error, index) => (
+                          <div 
+                            key={index} 
+                            className="flex items-start gap-2 text-xs text-destructive"
+                          >
+                            <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                            <span>{error}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Success note when partial import */}
+                  {csvErrors.length > 0 && importedEmails.length > 0 && (
+                    <p className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1.5">
+                      💡 เฉพาะอีเมลที่ถูกต้อง {importedEmails.length} รายการจะถูกนำเข้าเมื่อกดตกลง
+                    </p>
+                  )}
                 </div>
               )}
             </div>
