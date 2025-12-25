@@ -58,7 +58,8 @@ const DashboardMenu = () => {
 
           {/* Cost Management Card */}
           <div 
-            className="bg-card border border-border rounded-xl p-6 cursor-pointer hover:shadow-lg hover:border-primary/30 transition-all duration-200 group opacity-60"
+            onClick={() => navigate('/cost-management')}
+            className="bg-card border border-border rounded-xl p-6 cursor-pointer hover:shadow-lg hover:border-primary/30 transition-all duration-200 group"
           >
             <div className="aspect-square flex items-center justify-center mb-4">
               <div className="relative">
