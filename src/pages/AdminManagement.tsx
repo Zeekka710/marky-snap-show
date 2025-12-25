@@ -80,20 +80,63 @@ const AdminManagement = () => {
     setUploadedFileName(null);
   };
 
-  const parseCSV = (content: string): ImportedEmail[] => {
+  const parseCSV = (content: string): { emails: ImportedEmail[]; errors: string[] } => {
     const lines = content.split('\n').filter(line => line.trim());
     const emails: ImportedEmail[] = [];
+    const errors: string[] = [];
     
-    lines.forEach((line, index) => {
+    if (lines.length === 0) {
+      errors.push('ไฟล์ว่างเปล่า');
+      return { emails, errors };
+    }
+
+    // Check header row
+    const headerRow = lines[0].toLowerCase();
+    const hasEmailHeader = headerRow.includes('อีเมล') || headerRow.includes('email');
+    
+    if (!hasEmailHeader) {
+      errors.push('ไม่พบคอลัมน์ "อีเมล" หรือ "email" ในหัวตาราง');
+    }
+
+    // Parse data rows (skip header)
+    const dataLines = lines.slice(1);
+    
+    if (dataLines.length === 0) {
+      errors.push('ไม่พบข้อมูลในไฟล์ (มีเฉพาะหัวตาราง)');
+      return { emails, errors };
+    }
+
+    let invalidEmailCount = 0;
+    let emptyRowCount = 0;
+
+    dataLines.forEach((line, index) => {
       const columns = line.split(',').map(col => col.trim().replace(/"/g, ''));
+      
+      // Check if row is empty
+      if (columns.every(col => !col)) {
+        emptyRowCount++;
+        return;
+      }
+
       // Find email column (look for @ symbol)
       const emailCol = columns.find(col => col.includes('@'));
-      if (emailCol && emailCol.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-        emails.push({ email: emailCol, order: index + 1 });
+      
+      if (!emailCol) {
+        invalidEmailCount++;
+        errors.push(`แถวที่ ${index + 2}: ไม่พบอีเมล`);
+      } else if (!emailCol.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        invalidEmailCount++;
+        errors.push(`แถวที่ ${index + 2}: รูปแบบอีเมลไม่ถูกต้อง "${emailCol}"`);
+      } else {
+        emails.push({ email: emailCol, order: emails.length + 1 });
       }
     });
-    
-    return emails;
+
+    if (emptyRowCount > 0) {
+      errors.push(`พบแถวว่าง ${emptyRowCount} แถว`);
+    }
+
+    return { emails, errors };
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,22 +166,44 @@ const AdminManagement = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      const emails = parseCSV(content);
+      const { emails, errors } = parseCSV(content);
       
+      // Show errors if any format issues found
+      if (errors.length > 0 && emails.length === 0) {
+        toast({
+          title: 'รูปแบบไฟล์ไม่ถูกต้อง',
+          description: errors.slice(0, 3).join(', ') + (errors.length > 3 ? ` และอีก ${errors.length - 3} ข้อผิดพลาด` : ''),
+          variant: 'destructive',
+        });
+        setUploadedFileName(null);
+        return;
+      }
+
       if (emails.length === 0) {
         toast({
           title: 'ไม่พบอีเมล',
           description: 'ไม่พบอีเมลที่ถูกต้องในไฟล์',
           variant: 'destructive',
         });
+        setUploadedFileName(null);
         return;
       }
 
+      // Show warning if some rows had errors but some emails were found
+      if (errors.length > 0) {
+        toast({
+          title: 'นำเข้าบางส่วน',
+          description: `พบ ${emails.length} อีเมล แต่มี ${errors.length} แถวที่มีปัญหา`,
+          variant: 'default',
+        });
+      } else {
+        toast({
+          title: 'นำเข้าสำเร็จ',
+          description: `พบ ${emails.length} อีเมลในไฟล์`,
+        });
+      }
+
       setImportedEmails(emails);
-      toast({
-        title: 'นำเข้าสำเร็จ',
-        description: `พบ ${emails.length} อีเมลในไฟล์`,
-      });
     };
     reader.readAsText(file);
   };
