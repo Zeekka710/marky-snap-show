@@ -206,7 +206,7 @@ const filterTotalUsers = (total: number, filters: FilterValues): number => {
 
 const tabs = [
   { id: 'users', label: 'จำนวนผู้ใช้งาน' },
-  { id: 'tokens', label: 'จำนวนการใช้งานโทเคน' },
+  { id: 'tokens', label: 'จำนวนผู้ใช้งานตามอาชีพ' },
 ];
 
 const Dashboard = () => {
