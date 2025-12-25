@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Search, Clock, Plus, ChevronDown, Upload } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet } from 'lucide-react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+
+interface ImportedEmail {
+  email: string;
+  order: number;
+}
 
 const AdminManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,16 +46,113 @@ const AdminManagement = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [addModalType, setAddModalType] = useState<'central' | 'project'>('central');
   const [email, setEmail] = useState('');
+  const [importedEmails, setImportedEmails] = useState<ImportedEmail[]>([]);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleAddAdmin = (type: 'central' | 'project') => {
     setAddModalType(type);
     setIsAddModalOpen(true);
     setEmail('');
+    setImportedEmails([]);
+    setUploadedFileName(null);
+  };
+
+  const parseCSV = (content: string): ImportedEmail[] => {
+    const lines = content.split('\n').filter(line => line.trim());
+    const emails: ImportedEmail[] = [];
+    
+    lines.forEach((line, index) => {
+      const columns = line.split(',').map(col => col.trim().replace(/"/g, ''));
+      // Find email column (look for @ symbol)
+      const emailCol = columns.find(col => col.includes('@'));
+      if (emailCol && emailCol.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        emails.push({ email: emailCol, order: index + 1 });
+      }
+    });
+    
+    return emails;
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = [
+      'text/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ];
+    
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const isValidExtension = ['csv', 'xls', 'xlsx'].includes(fileExtension || '');
+
+    if (!validTypes.includes(file.type) && !isValidExtension) {
+      toast({
+        title: 'ไฟล์ไม่ถูกต้อง',
+        description: 'กรุณาเลือกไฟล์ CSV หรือ Excel (.csv, .xls, .xlsx)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadedFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      const emails = parseCSV(content);
+      
+      if (emails.length === 0) {
+        toast({
+          title: 'ไม่พบอีเมล',
+          description: 'ไม่พบอีเมลที่ถูกต้องในไฟล์',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      setImportedEmails(emails);
+      toast({
+        title: 'นำเข้าสำเร็จ',
+        description: `พบ ${emails.length} อีเมลในไฟล์`,
+      });
+    };
+    reader.readAsText(file);
+  };
+
+  const handleRemoveImportedEmail = (order: number) => {
+    setImportedEmails(prev => prev.filter(e => e.order !== order));
+  };
+
+  const handleClearFile = () => {
+    setUploadedFileName(null);
+    setImportedEmails([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = () => {
-    // Handle submit logic here
-    console.log('Adding admin:', { type: addModalType, email });
+    const emailsToAdd = importedEmails.length > 0 
+      ? importedEmails.map(e => e.email) 
+      : email ? [email] : [];
+    
+    if (emailsToAdd.length === 0) {
+      toast({
+        title: 'กรุณาระบุอีเมล',
+        description: 'กรุณากรอกอีเมลหรืออัพโหลดไฟล์',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    console.log('Adding admins:', { type: addModalType, emails: emailsToAdd });
+    toast({
+      title: 'เพิ่มแอดมินสำเร็จ',
+      description: `เพิ่ม ${emailsToAdd.length} แอดมินเรียบร้อยแล้ว`,
+    });
     setIsAddModalOpen(false);
   };
 
@@ -244,7 +347,7 @@ const AdminManagement = () => {
 
         {/* Add Admin Modal */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>
                 {addModalType === 'central' ? 'เพิ่มแอดมินกลาง (รายบุคคล)' : 'เพิ่มแอดมินโครงการ (รายบุคคล)'}
@@ -261,14 +364,69 @@ const AdminManagement = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder=""
+                  disabled={importedEmails.length > 0}
                 />
               </div>
+
+              {/* Imported emails list */}
+              {importedEmails.length > 0 && (
+                <div className="space-y-2">
+                  <Label>รายชื่อที่นำเข้า ({importedEmails.length} อีเมล)</Label>
+                  <div className="max-h-40 overflow-y-auto border border-border rounded-lg p-2 space-y-1">
+                    {importedEmails.map((item) => (
+                      <div 
+                        key={item.order} 
+                        className="flex items-center justify-between bg-muted/50 rounded px-3 py-1.5 text-sm"
+                      >
+                        <span className="flex items-center gap-2">
+                          <span className="text-muted-foreground w-6">{item.order}.</span>
+                          {item.email}
+                        </span>
+                        <button
+                          onClick={() => handleRemoveImportedEmail(item.order)}
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Uploaded file indicator */}
+              {uploadedFileName && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 rounded-lg px-3 py-2">
+                  <FileSpreadsheet className="w-4 h-4" />
+                  <span className="flex-1 truncate">{uploadedFileName}</span>
+                  <button
+                    onClick={handleClearFile}
+                    className="text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between">
-              <Button variant="outline" className="gap-2">
-                <Upload className="w-4 h-4" />
-                อัพโหลด
-              </Button>
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,.xls,.xlsx"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <Button 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="w-4 h-4" />
+                  อัพโหลด
+                </Button>
+              </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
                   ยกเลิก
