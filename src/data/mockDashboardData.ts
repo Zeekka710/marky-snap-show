@@ -183,3 +183,27 @@ export const tokenByModelData = [
 ];
 
 export const totalTokens = 501500000;
+
+// User counts by feature
+export const usersByFeatureData = [
+  { name: 'แชท', value: 2450000, color: 'hsl(217, 91%, 30%)' },
+  { name: 'ลบประวัติแชท', value: 890000, color: 'hsl(217, 91%, 40%)' },
+  { name: 'แชทชั่วคราว', value: 1250000, color: 'hsl(217, 91%, 50%)' },
+  { name: 'สร้างเอกสาร', value: 780000, color: 'hsl(217, 91%, 55%)' },
+  { name: 'สร้างรูปภาพ', value: 650000, color: 'hsl(217, 91%, 60%)' },
+  { name: 'สร้างข้อความเสียง', value: 420000, color: 'hsl(217, 91%, 70%)' },
+  { name: 'ข่าวสาร', value: 310000, color: 'hsl(217, 91%, 80%)' },
+];
+
+// User counts by model
+export const usersByModelData = [
+  { name: 'Gemini-2.5 Pro', value: 980000, color: 'hsl(217, 91%, 25%)' },
+  { name: 'Gemini-2.5 Flash', value: 850000, color: 'hsl(217, 91%, 35%)' },
+  { name: 'GPT-5', value: 720000, color: 'hsl(217, 91%, 45%)' },
+  { name: 'Claude-3', value: 580000, color: 'hsl(217, 91%, 55%)' },
+  { name: 'Sonar', value: 420000, color: 'hsl(217, 91%, 65%)' },
+  { name: 'Grok-1', value: 280000, color: 'hsl(217, 91%, 75%)' },
+  { name: 'อื่นๆ', value: 170000, color: 'hsl(217, 91%, 85%)' },
+];
+
+export const totalUsersByUsage = 3500024;
