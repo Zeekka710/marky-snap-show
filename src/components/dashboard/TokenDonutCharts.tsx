@@ -106,7 +106,7 @@ const DonutChart = ({
 
 const TokenDonutCharts = ({ featureData, modelData, totalTokens, unit = 'tokens' }: TokenDonutChartsProps) => {
   const featureTitle = unit === 'tokens' ? 'จำนวนโทเคนตามฟีเจอร์การใช้งาน' : 'จำนวนการใช้งานตามฟีเจอร์';
-  const modelTitle = unit === 'tokens' ? 'จำนวนโทเคนตามโมเดล' : 'จำนวนผู้ใช้งานตามโมเดล';
+  const modelTitle = unit === 'tokens' ? 'จำนวนโทเคนตามโมเดล' : 'จำนวนการใช้งานตามโมเดล';
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
