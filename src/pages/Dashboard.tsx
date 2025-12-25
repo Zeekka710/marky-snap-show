@@ -2,6 +2,9 @@ import { useState, useMemo, useCallback } from 'react';
 import { DateRange } from 'react-day-picker';
 import { subMonths, eachDayOfInterval, format } from 'date-fns';
 import { th } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import FilterBar, { FilterValues } from '@/components/dashboard/FilterBar';
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
@@ -207,6 +210,7 @@ const tabs = [
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('users');
   const [filters, setFilters] = useState<FilterValues>({
     dateRange: {
@@ -237,7 +241,17 @@ const Dashboard = () => {
       <DashboardSidebar />
       
       <main className="ml-64 p-8">
-        <h1 className="text-2xl font-bold text-foreground mb-6">แดชบอร์ด</h1>
+        <div className="flex items-center gap-4 mb-6">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate('/')}
+            className="hover:bg-accent"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-2xl font-bold text-foreground">Usage Trend</h1>
+        </div>
         
         <FilterBar onFilterChange={handleFilterChange} />
         
