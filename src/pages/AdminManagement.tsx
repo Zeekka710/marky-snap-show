@@ -82,10 +82,11 @@ const AdminManagement = () => {
     setCsvErrors([]);
   };
 
-  const parseCSV = (content: string): { emails: ImportedEmail[]; errors: string[] } => {
+  const parseCSV = (content: string, existingEmails: string[]): { emails: ImportedEmail[]; errors: string[] } => {
     const lines = content.split('\n').filter(line => line.trim());
     const emails: ImportedEmail[] = [];
     const errors: string[] = [];
+    const seenEmails = new Set<string>();
     
     if (lines.length === 0) {
       errors.push('ไฟล์ว่างเปล่า');
@@ -108,7 +109,6 @@ const AdminManagement = () => {
       return { emails, errors };
     }
 
-    let invalidEmailCount = 0;
     let emptyRowCount = 0;
 
     dataLines.forEach((line, index) => {
@@ -124,13 +124,21 @@ const AdminManagement = () => {
       const emailCol = columns.find(col => col.includes('@'));
       
       if (!emailCol) {
-        invalidEmailCount++;
         errors.push(`แถวที่ ${index + 2}: ไม่พบอีเมล`);
       } else if (!emailCol.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-        invalidEmailCount++;
         errors.push(`แถวที่ ${index + 2}: รูปแบบอีเมลไม่ถูกต้อง "${emailCol}"`);
       } else {
-        emails.push({ email: emailCol, order: emails.length + 1 });
+        const normalizedEmail = emailCol.toLowerCase();
+        // Check duplicate in file
+        if (seenEmails.has(normalizedEmail)) {
+          errors.push(`แถวที่ ${index + 2}: อีเมลซ้ำในไฟล์ "${emailCol}"`);
+        // Check duplicate in system
+        } else if (existingEmails.includes(normalizedEmail)) {
+          errors.push(`แถวที่ ${index + 2}: อีเมลซ้ำในระบบ "${emailCol}"`);
+        } else {
+          seenEmails.add(normalizedEmail);
+          emails.push({ email: emailCol, order: emails.length + 1 });
+        }
       }
     });
 
@@ -168,7 +176,9 @@ const AdminManagement = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      const { emails, errors } = parseCSV(content);
+      // Get existing emails from both central and project admins
+      const existingEmails = [...centralAdmins, ...projectAdmins].map(a => a.email.toLowerCase());
+      const { emails, errors } = parseCSV(content, existingEmails);
       
       // Store errors for preview
       setCsvErrors(errors);
