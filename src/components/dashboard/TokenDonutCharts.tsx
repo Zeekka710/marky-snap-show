@@ -105,7 +105,7 @@ const DonutChart = ({
 };
 
 const TokenDonutCharts = ({ featureData, modelData, totalTokens, unit = 'tokens' }: TokenDonutChartsProps) => {
-  const featureTitle = unit === 'tokens' ? 'จำนวนโทเคนตามฟีเจอร์การใช้งาน' : 'จำนวนผู้ใช้งานตามฟีเจอร์';
+  const featureTitle = unit === 'tokens' ? 'จำนวนโทเคนตามฟีเจอร์การใช้งาน' : 'จำนวนการใช้งานตามฟีเจอร์';
   const modelTitle = unit === 'tokens' ? 'จำนวนโทเคนตามโมเดล' : 'จำนวนผู้ใช้งานตามโมเดล';
   
   return (
