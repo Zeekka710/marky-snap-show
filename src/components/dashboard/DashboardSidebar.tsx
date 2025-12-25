@@ -1,11 +1,14 @@
-import { LayoutDashboard, Users, MoreVertical } from 'lucide-react';
+import { LayoutDashboard, Users, MoreVertical, Coins, FileText, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Link, useLocation } from 'react-router-dom';
 
 interface DashboardSidebarProps {
   className?: string;
 }
 
 const DashboardSidebar = ({ className }: DashboardSidebarProps) => {
+  const location = useLocation();
+  
   return (
     <aside className={cn(
       "w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-screen fixed left-0 top-0",
@@ -18,14 +21,21 @@ const DashboardSidebar = ({ className }: DashboardSidebarProps) => {
         </div>
         <span className="font-semibold text-sidebar-foreground text-lg">TH-AI Passport</span>
         <button className="ml-auto text-sidebar-foreground/60 hover:text-sidebar-foreground">
-          <MoreVertical className="w-5 h-5" />
+          <Menu className="w-5 h-5" />
         </button>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1">
-        <NavItem icon={Users} label="จัดการแอดมินและผู้ใช้งาน" />
-        <NavItem icon={LayoutDashboard} label="แดชบอร์ด" active />
+        <NavItem to="#" icon={Coins} label="จัดการโครงการและโทเคน" />
+        <NavItem to="#" icon={Users} label="จัดการแอดมินและผู้ใช้งาน" />
+        <NavItem to="#" icon={FileText} label="จัดการเนื้อหาความยินยอม" />
+        <NavItem 
+          to="/" 
+          icon={LayoutDashboard} 
+          label="แดชบอร์ด" 
+          active={location.pathname === '/' || location.pathname === '/usage-trend'} 
+        />
       </nav>
 
       {/* User Profile */}
@@ -48,14 +58,16 @@ const DashboardSidebar = ({ className }: DashboardSidebarProps) => {
 };
 
 interface NavItemProps {
+  to: string;
   icon: React.ElementType;
   label: string;
   active?: boolean;
 }
 
-const NavItem = ({ icon: Icon, label, active }: NavItemProps) => {
+const NavItem = ({ to, icon: Icon, label, active }: NavItemProps) => {
   return (
-    <button
+    <Link
+      to={to}
       className={cn(
         "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
         active
@@ -65,7 +77,7 @@ const NavItem = ({ icon: Icon, label, active }: NavItemProps) => {
     >
       <Icon className="w-5 h-5" />
       <span>{label}</span>
-    </button>
+    </Link>
   );
 };
 
