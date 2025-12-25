@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet } from 'lucide-react';
+import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet, Eye, MoreVertical } from 'lucide-react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,11 +33,29 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
 
 interface ImportedEmail {
   email: string;
   order: number;
 }
+
+interface Admin {
+  id: string;
+  email: string;
+  name: string | null;
+  project: string | null;
+  status: 'active' | 'suspended' | 'pending' | 'locked';
+  tcVersion: string | null;
+  version: string | null;
+}
+
+const initialCentralAdmins: Admin[] = [
+  { id: '1', email: 'admin.central@gmail.com', name: 'ศุภชัย ธนากร', project: 'ทั้งหมด', status: 'active', tcVersion: '1.0', version: '2.0' },
+  { id: '2', email: 'super.admin@gmail.com', name: 'สมศรี ใจดี', project: 'ทั้งหมด', status: 'active', tcVersion: '1.0', version: '2.0' },
+  { id: '3', email: 'master.admin@gmail.com', name: 'ธนพล วิชัยดิษฐ์', project: 'ทั้งหมด', status: 'suspended', tcVersion: '1.0', version: '2.0' },
+  { id: '4', email: 'locked.admin@gmail.com', name: 'วรินทร์ สุขใจ', project: 'ทั้งหมด', status: 'locked', tcVersion: '1.0', version: '2.0' },
+];
 
 const AdminManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,6 +66,9 @@ const AdminManagement = () => {
   const [email, setEmail] = useState('');
   const [importedEmails, setImportedEmails] = useState<ImportedEmail[]>([]);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [centralAdmins, setCentralAdmins] = useState<Admin[]>(initialCentralAdmins);
+  const [projectAdmins, setProjectAdmins] = useState<Admin[]>([]);
+  const [rowsPerPage, setRowsPerPage] = useState('10');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -148,12 +169,126 @@ const AdminManagement = () => {
       return;
     }
 
-    console.log('Adding admins:', { type: addModalType, emails: emailsToAdd });
+    const newAdmins: Admin[] = emailsToAdd.map((email, index) => ({
+      id: `new-${Date.now()}-${index}`,
+      email,
+      name: null,
+      project: null,
+      status: 'pending' as const,
+      tcVersion: null,
+      version: null,
+    }));
+
+    if (addModalType === 'central') {
+      setCentralAdmins(prev => [...prev, ...newAdmins]);
+    } else {
+      setProjectAdmins(prev => [...prev, ...newAdmins]);
+    }
+
     toast({
       title: 'เพิ่มแอดมินสำเร็จ',
       description: `เพิ่ม ${emailsToAdd.length} แอดมินเรียบร้อยแล้ว`,
     });
     setIsAddModalOpen(false);
+  };
+
+  const getStatusBadge = (status: Admin['status']) => {
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0">กำลังใช้งาน</Badge>;
+      case 'suspended':
+        return <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-0">ระงับการใช้งาน</Badge>;
+      case 'pending':
+        return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 border-0">ยังไม่เปิดใช้งาน</Badge>;
+      case 'locked':
+        return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-0">ถูกล็อค</Badge>;
+      default:
+        return null;
+    }
+  };
+
+  const renderAdminTable = (admins: Admin[]) => {
+    const filteredAdmins = admins.filter(admin => {
+      const matchesSearch = admin.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (admin.name && admin.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesStatus = statusFilter === 'all' || 
+        (statusFilter === 'active' && admin.status === 'active') ||
+        (statusFilter === 'inactive' && admin.status !== 'active');
+      return matchesSearch && matchesStatus;
+    });
+
+    return (
+      <div className="bg-card rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="font-medium">
+                <div className="flex items-center gap-1">
+                  อีเมล
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </TableHead>
+              <TableHead className="font-medium">ชื่อ นามสกุล</TableHead>
+              <TableHead className="font-medium">โครงการ</TableHead>
+              <TableHead className="font-medium">สถานะผู้ใช้งาน</TableHead>
+              <TableHead className="font-medium">เวอร์ชัน T&C</TableHead>
+              <TableHead className="font-medium">เวอร์ชัน</TableHead>
+              <TableHead className="font-medium w-16"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredAdmins.map((admin) => (
+              <TableRow key={admin.id}>
+                <TableCell>{admin.email}</TableCell>
+                <TableCell>{admin.name || '-'}</TableCell>
+                <TableCell>{admin.project || '-'}</TableCell>
+                <TableCell>{getStatusBadge(admin.status)}</TableCell>
+                <TableCell>{admin.tcVersion || '-'}</TableCell>
+                <TableCell>{admin.version || '-'}</TableCell>
+                <TableCell>
+                  {admin.status === 'pending' ? (
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {filteredAdmins.length === 0 && <EmptyState />}
+        {filteredAdmins.length > 0 && (
+          <div className="flex items-center justify-end gap-4 px-4 py-3 border-t border-border text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span>จำนวนแถวต่อหน้า :</span>
+              <Select value={rowsPerPage} onValueChange={setRowsPerPage}>
+                <SelectTrigger className="w-16 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <span>{filteredAdmins.length} จาก {admins.length}</span>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
+                <ChevronDown className="w-4 h-4 rotate-90" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
+                <ChevronDown className="w-4 h-4 -rotate-90" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const EmptyState = () => (
@@ -252,14 +387,17 @@ const AdminManagement = () => {
               <Search className="w-4 h-4" />
               ค้นหา
             </Button>
+          </div>
+
+          <div className="mb-6">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40">
-                <span className="text-muted-foreground">สถานะ </span>
+              <SelectTrigger className="w-56">
+                <span className="text-muted-foreground">สถานะผู้ใช้งาน </span>
                 <SelectValue placeholder="ทั้งหมด" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">ทั้งหมด</SelectItem>
-                <SelectItem value="active">ใช้งาน</SelectItem>
+                <SelectItem value="active">กำลังใช้งาน</SelectItem>
                 <SelectItem value="inactive">ไม่ใช้งาน</SelectItem>
               </SelectContent>
             </Select>
@@ -267,81 +405,15 @@ const AdminManagement = () => {
 
           {/* Table */}
           <TabsContent value="central" className="mt-0">
-            <div className="bg-card rounded-lg border border-border">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="font-medium">
-                      <div className="flex items-center gap-1">
-                        อีเมล
-                        <ChevronDown className="w-4 h-4" />
-                      </div>
-                    </TableHead>
-                    <TableHead className="font-medium">ชื่อ นามสกุล</TableHead>
-                    <TableHead className="font-medium">โครงการที่ดูแล</TableHead>
-                    <TableHead className="font-medium">ตำแหน่ง</TableHead>
-                    <TableHead className="font-medium">เบอร์โทรศัพท์</TableHead>
-                    <TableHead className="font-medium">สถานะ</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {/* Empty state */}
-                </TableBody>
-              </Table>
-              <EmptyState />
-            </div>
+            {renderAdminTable(centralAdmins)}
           </TabsContent>
 
           <TabsContent value="project" className="mt-0">
-            <div className="bg-card rounded-lg border border-border">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="font-medium">
-                      <div className="flex items-center gap-1">
-                        อีเมล
-                        <ChevronDown className="w-4 h-4" />
-                      </div>
-                    </TableHead>
-                    <TableHead className="font-medium">ชื่อ นามสกุล</TableHead>
-                    <TableHead className="font-medium">โครงการที่ดูแล</TableHead>
-                    <TableHead className="font-medium">ตำแหน่ง</TableHead>
-                    <TableHead className="font-medium">เบอร์โทรศัพท์</TableHead>
-                    <TableHead className="font-medium">สถานะ</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {/* Empty state */}
-                </TableBody>
-              </Table>
-              <EmptyState />
-            </div>
+            {renderAdminTable(projectAdmins)}
           </TabsContent>
 
           <TabsContent value="users" className="mt-0">
-            <div className="bg-card rounded-lg border border-border">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="font-medium">
-                      <div className="flex items-center gap-1">
-                        อีเมล
-                        <ChevronDown className="w-4 h-4" />
-                      </div>
-                    </TableHead>
-                    <TableHead className="font-medium">ชื่อ นามสกุล</TableHead>
-                    <TableHead className="font-medium">โครงการที่ดูแล</TableHead>
-                    <TableHead className="font-medium">ตำแหน่ง</TableHead>
-                    <TableHead className="font-medium">เบอร์โทรศัพท์</TableHead>
-                    <TableHead className="font-medium">สถานะ</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {/* Empty state */}
-                </TableBody>
-              </Table>
-              <EmptyState />
-            </div>
+            {renderAdminTable([])}
           </TabsContent>
         </Tabs>
 
