@@ -15,6 +15,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, Tooltip } from 'recharts';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import TokenDonutCharts from '@/components/dashboard/TokenDonutCharts';
 import {
@@ -269,11 +270,58 @@ const CostManagement = () => {
             </div>
           </Card>
         ) : (
-          <TokenDonutCharts
-            featureData={tokenByFeatureData}
-            modelData={tokenByModelData}
-            totalTokens={totalTokens}
-          />
+          <div className="space-y-6">
+            <TokenDonutCharts
+              featureData={tokenByFeatureData}
+              modelData={tokenByModelData}
+              totalTokens={totalTokens}
+            />
+            
+            {/* Horizontal Bar Chart for Token by Feature */}
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-primary mb-6">
+                จำนวนโทเคนตามฟีเจอร์การใช้งาน
+              </h3>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={tokenByFeatureData}
+                    layout="vertical"
+                    margin={{ top: 0, right: 30, left: 120, bottom: 30 }}
+                  >
+                    <XAxis
+                      type="number"
+                      tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                    />
+                    <YAxis
+                      dataKey="name"
+                      type="category"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
+                      width={110}
+                    />
+                    <Tooltip
+                      formatter={(value: number) => [`${(value / 1000000).toFixed(1)}M`, 'โทเคน']}
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                      }}
+                    />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
+                      {tokenByFeatureData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+          </div>
         )}
       </main>
     </div>
