@@ -105,6 +105,73 @@ export const tokenByFeatureData = [
   { name: 'ข่าวสาร', value: 18200000, color: 'hsl(217, 91%, 80%)' },
 ];
 
+// Token by feature broken down by model
+export const tokenByFeatureByModelData: Record<string, { name: string; value: number; color: string }[]> = {
+  all: [
+    { name: 'แชท', value: 300900000, color: 'hsl(217, 91%, 30%)' },
+    { name: 'ลบประวัติแชท', value: 50450000, color: 'hsl(217, 91%, 40%)' },
+    { name: 'แชทชั่วคราว', value: 75225000, color: 'hsl(217, 91%, 50%)' },
+    { name: 'สร้างเอกสาร', value: 45612500, color: 'hsl(217, 91%, 55%)' },
+    { name: 'สร้างรูปภาพ', value: 38500000, color: 'hsl(217, 91%, 60%)' },
+    { name: 'สร้างข้อความเสียง', value: 25300000, color: 'hsl(217, 91%, 70%)' },
+    { name: 'ข่าวสาร', value: 18200000, color: 'hsl(217, 91%, 80%)' },
+  ],
+  'gemini-pro': [
+    { name: 'แชท', value: 85200000, color: 'hsl(217, 91%, 30%)' },
+    { name: 'ลบประวัติแชท', value: 12500000, color: 'hsl(217, 91%, 40%)' },
+    { name: 'แชทชั่วคราว', value: 18300000, color: 'hsl(217, 91%, 50%)' },
+    { name: 'สร้างเอกสาร', value: 15200000, color: 'hsl(217, 91%, 55%)' },
+    { name: 'สร้างรูปภาพ', value: 8500000, color: 'hsl(217, 91%, 60%)' },
+    { name: 'สร้างข้อความเสียง', value: 5200000, color: 'hsl(217, 91%, 70%)' },
+    { name: 'ข่าวสาร', value: 4100000, color: 'hsl(217, 91%, 80%)' },
+  ],
+  'gemini-flash': [
+    { name: 'แชท', value: 72500000, color: 'hsl(217, 91%, 30%)' },
+    { name: 'ลบประวัติแชท', value: 10200000, color: 'hsl(217, 91%, 40%)' },
+    { name: 'แชทชั่วคราว', value: 15800000, color: 'hsl(217, 91%, 50%)' },
+    { name: 'สร้างเอกสาร', value: 12100000, color: 'hsl(217, 91%, 55%)' },
+    { name: 'สร้างรูปภาพ', value: 7200000, color: 'hsl(217, 91%, 60%)' },
+    { name: 'สร้างข้อความเสียง', value: 4800000, color: 'hsl(217, 91%, 70%)' },
+    { name: 'ข่าวสาร', value: 3500000, color: 'hsl(217, 91%, 80%)' },
+  ],
+  'gpt-5': [
+    { name: 'แชท', value: 65800000, color: 'hsl(217, 91%, 30%)' },
+    { name: 'ลบประวัติแชท', value: 9800000, color: 'hsl(217, 91%, 40%)' },
+    { name: 'แชทชั่วคราว', value: 14200000, color: 'hsl(217, 91%, 50%)' },
+    { name: 'สร้างเอกสาร', value: 8500000, color: 'hsl(217, 91%, 55%)' },
+    { name: 'สร้างรูปภาพ', value: 9200000, color: 'hsl(217, 91%, 60%)' },
+    { name: 'สร้างข้อความเสียง', value: 6100000, color: 'hsl(217, 91%, 70%)' },
+    { name: 'ข่าวสาร', value: 4200000, color: 'hsl(217, 91%, 80%)' },
+  ],
+  'claude-3': [
+    { name: 'แชท', value: 45200000, color: 'hsl(217, 91%, 30%)' },
+    { name: 'ลบประวัติแชท', value: 8500000, color: 'hsl(217, 91%, 40%)' },
+    { name: 'แชทชั่วคราว', value: 12500000, color: 'hsl(217, 91%, 50%)' },
+    { name: 'สร้างเอกสาร', value: 5800000, color: 'hsl(217, 91%, 55%)' },
+    { name: 'สร้างรูปภาพ', value: 7800000, color: 'hsl(217, 91%, 60%)' },
+    { name: 'สร้างข้อความเสียง', value: 4500000, color: 'hsl(217, 91%, 70%)' },
+    { name: 'ข่าวสาร', value: 3200000, color: 'hsl(217, 91%, 80%)' },
+  ],
+  'sonar': [
+    { name: 'แชท', value: 22100000, color: 'hsl(217, 91%, 30%)' },
+    { name: 'ลบประวัติแชท', value: 5250000, color: 'hsl(217, 91%, 40%)' },
+    { name: 'แชทชั่วคราว', value: 8225000, color: 'hsl(217, 91%, 50%)' },
+    { name: 'สร้างเอกสาร', value: 2512500, color: 'hsl(217, 91%, 55%)' },
+    { name: 'สร้างรูปภาพ', value: 3800000, color: 'hsl(217, 91%, 60%)' },
+    { name: 'สร้างข้อความเสียง', value: 2700000, color: 'hsl(217, 91%, 70%)' },
+    { name: 'ข่าวสาร', value: 1900000, color: 'hsl(217, 91%, 80%)' },
+  ],
+  'grok-1': [
+    { name: 'แชท', value: 10100000, color: 'hsl(217, 91%, 30%)' },
+    { name: 'ลบประวัติแชท', value: 4200000, color: 'hsl(217, 91%, 40%)' },
+    { name: 'แชทชั่วคราว', value: 6200000, color: 'hsl(217, 91%, 50%)' },
+    { name: 'สร้างเอกสาร', value: 1500000, color: 'hsl(217, 91%, 55%)' },
+    { name: 'สร้างรูปภาพ', value: 2000000, color: 'hsl(217, 91%, 60%)' },
+    { name: 'สร้างข้อความเสียง', value: 2000000, color: 'hsl(217, 91%, 70%)' },
+    { name: 'ข่าวสาร', value: 1300000, color: 'hsl(217, 91%, 80%)' },
+  ],
+};
+
 export const tokenByModelData = [
   { name: 'Gemini-2.5 Pro', value: 125375000, color: 'hsl(217, 91%, 25%)' },
   { name: 'Gemini-2.5 Flash', value: 100300000, color: 'hsl(217, 91%, 35%)' },

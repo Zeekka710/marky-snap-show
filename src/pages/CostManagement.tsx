@@ -25,6 +25,7 @@ import {
 } from '@/data/costManagementData';
 import {
   tokenByFeatureData,
+  tokenByFeatureByModelData,
   tokenByModelData,
   totalTokens,
   totalUsersOverview,
@@ -279,13 +280,28 @@ const CostManagement = () => {
             
             {/* Horizontal Bar Chart for Token by Feature */}
             <Card className="p-6">
-              <h3 className="text-lg font-semibold text-primary mb-6">
-                จำนวนโทเคนตามฟีเจอร์การใช้งาน
-              </h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-primary">
+                  จำนวนโทเคนตามฟีเจอร์การใช้งาน
+                </h3>
+                <Select value={selectedModel} onValueChange={setSelectedModel}>
+                  <SelectTrigger className="w-[200px]">
+                    <span className="text-muted-foreground mr-2">โมเดล:</span>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {modelOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={tokenByFeatureData}
+                    data={tokenByFeatureByModelData[selectedModel] || tokenByFeatureByModelData['all']}
                     layout="vertical"
                     margin={{ top: 0, right: 30, left: 120, bottom: 30 }}
                   >
@@ -313,7 +329,7 @@ const CostManagement = () => {
                       }}
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
-                      {tokenByFeatureData.map((entry, index) => (
+                      {(tokenByFeatureByModelData[selectedModel] || tokenByFeatureByModelData['all']).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Bar>

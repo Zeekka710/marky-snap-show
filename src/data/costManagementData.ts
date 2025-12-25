@@ -39,9 +39,12 @@ export const totalTokensUsed = 24000000;
 
 export const modelOptions = [
   { value: 'all', label: 'ทั้งหมด' },
-  { value: 'gemini', label: 'Gemini' },
-  { value: 'gpt', label: 'GPT' },
-  { value: 'claude', label: 'Claude' },
+  { value: 'gemini-pro', label: 'Gemini-2.5 Pro' },
+  { value: 'gemini-flash', label: 'Gemini-2.5 Flash' },
+  { value: 'gpt-5', label: 'GPT-5' },
+  { value: 'claude-3', label: 'Claude-3' },
+  { value: 'sonar', label: 'Sonar' },
+  { value: 'grok-1', label: 'Grok-1' },
 ];
 
 export const featureOptions = [
