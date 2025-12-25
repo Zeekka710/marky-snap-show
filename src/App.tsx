@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DashboardMenu from "./pages/DashboardMenu";
 import Index from "./pages/Index";
 import CostManagement from "./pages/CostManagement";
+import AdminManagement from "./pages/AdminManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/" element={<DashboardMenu />} />
           <Route path="/usage-trend" element={<Index />} />
           <Route path="/cost-management" element={<CostManagement />} />
+          <Route path="/admin-management" element={<AdminManagement />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

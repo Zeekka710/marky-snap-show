@@ -28,13 +28,18 @@ const DashboardSidebar = ({ className }: DashboardSidebarProps) => {
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1">
         <NavItem to="#" icon={Coins} label="จัดการโครงการและโทเคน" />
-        <NavItem to="#" icon={Users} label="จัดการแอดมินและผู้ใช้งาน" />
+        <NavItem 
+          to="/admin-management" 
+          icon={Users} 
+          label="จัดการแอดมินและผู้ใช้งาน" 
+          active={location.pathname === '/admin-management'}
+        />
         <NavItem to="#" icon={FileText} label="จัดการเนื้อหาความยินยอม" />
         <NavItem 
           to="/" 
           icon={LayoutDashboard} 
           label="แดชบอร์ด" 
-          active={location.pathname === '/' || location.pathname === '/usage-trend'} 
+          active={location.pathname === '/' || location.pathname === '/usage-trend' || location.pathname === '/cost-management'} 
         />
       </nav>
 
