@@ -206,4 +206,4 @@ export const usersByModelData = [
   { name: 'อื่นๆ', value: 170000, color: 'hsl(217, 91%, 85%)' },
 ];
 
-export const totalUsersByUsage = 3500024;
+export const totalUsersByUsage = 12000000;
