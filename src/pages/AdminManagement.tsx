@@ -513,18 +513,12 @@ const AdminManagement = () => {
                     {importedEmails.map((item) => (
                       <div 
                         key={item.order} 
-                        className="flex items-center justify-between bg-muted/50 rounded px-3 py-1.5 text-sm"
+                        className="flex items-center bg-muted/50 rounded px-3 py-1.5 text-sm"
                       >
                         <span className="flex items-center gap-2">
                           <span className="text-muted-foreground w-6">{item.order}.</span>
                           {item.email}
                         </span>
-                        <button
-                          onClick={() => handleRemoveImportedEmail(item.order)}
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
                       </div>
                     ))}
                   </div>
@@ -545,51 +539,84 @@ const AdminManagement = () => {
                 </div>
               )}
 
-              {/* Error Details Preview */}
-              {(csvErrors.length > 0 || importedEmails.length > 0) && uploadedFileName && (
+              {/* Success State */}
+              {uploadedFileName && csvErrors.length === 0 && importedEmails.length > 0 && (
+                <div className="space-y-3 border border-green-200 rounded-lg p-4 bg-green-50">
+                  <div className="flex items-center gap-2 text-green-700">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span className="font-medium">สำเร็จ {importedEmails.length} รายการ</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Error State */}
+              {uploadedFileName && csvErrors.length > 0 && importedEmails.length === 0 && (
+                <div className="space-y-3 border border-destructive/30 rounded-lg p-4 bg-destructive/5">
+                  <div className="flex items-center gap-2 text-destructive">
+                    <AlertCircle className="w-5 h-5" />
+                    <span className="font-medium">ไม่สำเร็จ {csvErrors.length} รายการ กรุณาตรวจสอบไฟล์</span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">รายละเอียดข้อผิดพลาด:</p>
+                    <div className="max-h-32 overflow-y-auto bg-destructive/5 border border-destructive/20 rounded-md p-2 space-y-1">
+                      {csvErrors.map((error, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-start gap-2 text-xs text-destructive"
+                        >
+                          <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                          <span>{error}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleClearFile}
+                    className="mt-2"
+                  >
+                    ย้อนกลับ
+                  </Button>
+                </div>
+              )}
+
+              {/* Partial Success State */}
+              {uploadedFileName && csvErrors.length > 0 && importedEmails.length > 0 && (
                 <div className="space-y-3 border border-border rounded-lg p-4 bg-muted/20">
                   <h4 className="text-sm font-medium text-foreground">ผลการตรวจสอบไฟล์</h4>
                   
                   {/* Summary */}
                   <div className="flex gap-4 text-sm">
-                    {importedEmails.length > 0 && (
-                      <div className="flex items-center gap-1.5 text-green-600">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>อีเมลถูกต้อง: {importedEmails.length} รายการ</span>
-                      </div>
-                    )}
-                    {csvErrors.length > 0 && (
-                      <div className="flex items-center gap-1.5 text-destructive">
-                        <AlertCircle className="w-4 h-4" />
-                        <span>ข้อผิดพลาด: {csvErrors.length} รายการ</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1.5 text-green-600">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>สำเร็จ: {importedEmails.length} รายการ</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-destructive">
+                      <AlertCircle className="w-4 h-4" />
+                      <span>ไม่สำเร็จ: {csvErrors.length} รายการ</span>
+                    </div>
                   </div>
 
                   {/* Error List */}
-                  {csvErrors.length > 0 && (
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-muted-foreground">รายละเอียดข้อผิดพลาด:</p>
-                      <div className="max-h-32 overflow-y-auto bg-destructive/5 border border-destructive/20 rounded-md p-2 space-y-1">
-                        {csvErrors.map((error, index) => (
-                          <div 
-                            key={index} 
-                            className="flex items-start gap-2 text-xs text-destructive"
-                          >
-                            <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                            <span>{error}</span>
-                          </div>
-                        ))}
-                      </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-muted-foreground">รายละเอียดข้อผิดพลาด:</p>
+                    <div className="max-h-32 overflow-y-auto bg-destructive/5 border border-destructive/20 rounded-md p-2 space-y-1">
+                      {csvErrors.map((error, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-start gap-2 text-xs text-destructive"
+                        >
+                          <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                          <span>{error}</span>
+                        </div>
+                      ))}
                     </div>
-                  )}
+                  </div>
 
-                  {/* Success note when partial import */}
-                  {csvErrors.length > 0 && importedEmails.length > 0 && (
-                    <p className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1.5">
-                      💡 เฉพาะอีเมลที่ถูกต้อง {importedEmails.length} รายการจะถูกนำเข้าเมื่อกดตกลง
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1.5">
+                    💡 เฉพาะอีเมลที่ถูกต้อง {importedEmails.length} รายการจะถูกนำเข้าเมื่อกดตกลง
+                  </p>
                 </div>
               )}
             </div>
