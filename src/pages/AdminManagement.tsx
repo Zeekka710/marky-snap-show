@@ -633,8 +633,8 @@ const AdminManagement = () => {
                 </Button>
                 <Button 
                   onClick={handleSubmit}
-                  disabled={csvErrors.length > 0 && importedEmails.length === 0}
-                  className={csvErrors.length > 0 && importedEmails.length === 0 ? "bg-muted text-muted-foreground hover:bg-muted cursor-not-allowed" : ""}
+                  disabled={Boolean(uploadedFileName) && csvErrors.length > 0}
+                  className="disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100"
                 >
                   ตกลง
                 </Button>
