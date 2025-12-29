@@ -587,39 +587,24 @@ const AdminManagement = () => {
               {/* Partial Success State */}
               {uploadedFileName && csvErrors.length > 0 && importedEmails.length > 0 && (
                 <div className="space-y-3 border border-border rounded-lg p-4 bg-muted/20">
-                  <h4 className="text-sm font-medium text-foreground">ผลการตรวจสอบไฟล์</h4>
-                  
                   {/* Summary */}
-                  <div className="flex gap-4 text-sm">
+                  <div className="flex flex-col gap-2 text-sm">
                     <div className="flex items-center gap-1.5 text-green-600">
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>สำเร็จ: {importedEmails.length} รายการ</span>
+                      <span>สำเร็จ {importedEmails.length} รายการ</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-destructive">
                       <AlertCircle className="w-4 h-4" />
-                      <span>ไม่สำเร็จ: {csvErrors.length} รายการ</span>
+                      <span>ไม่สำเร็จ {csvErrors.length} รายการ กรุณาตรวจสอบไฟล์</span>
                     </div>
                   </div>
-
-                  {/* Error List */}
-                  <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground">รายละเอียดข้อผิดพลาด:</p>
-                    <div className="max-h-32 overflow-y-auto bg-destructive/5 border border-destructive/20 rounded-md p-2 space-y-1">
-                      {csvErrors.map((error, index) => (
-                        <div 
-                          key={index} 
-                          className="flex items-start gap-2 text-xs text-destructive"
-                        >
-                          <AlertCircle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                          <span>{error}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1.5">
-                    💡 เฉพาะอีเมลที่ถูกต้อง {importedEmails.length} รายการจะถูกนำเข้าเมื่อกดตกลง
-                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleClearFile}
+                  >
+                    ย้อนกลับ
+                  </Button>
                 </div>
               )}
             </div>
