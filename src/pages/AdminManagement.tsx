@@ -487,23 +487,26 @@ const AdminManagement = () => {
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>
-                {addModalType === 'central' ? 'เพิ่มแอดมินกลาง (รายบุคคล)' : 'เพิ่มแอดมินโครงการ (รายบุคคล)'}
+                {addModalType === 'central' 
+                  ? (uploadedFileName ? 'เพิ่มแอดมินกลาง' : 'เพิ่มแอดมินกลาง (รายบุคคล)') 
+                  : (uploadedFileName ? 'เพิ่มแอดมินโครงการ' : 'เพิ่มแอดมินโครงการ (รายบุคคล)')}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  อีเมล<span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder=""
-                  disabled={importedEmails.length > 0}
-                />
-              </div>
+              {!uploadedFileName && (
+                <div className="space-y-2">
+                  <Label htmlFor="email">
+                    อีเมล<span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder=""
+                  />
+                </div>
+              )}
 
               {/* Imported emails list */}
               {importedEmails.length > 0 && (
