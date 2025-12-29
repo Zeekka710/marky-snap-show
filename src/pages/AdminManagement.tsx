@@ -631,7 +631,10 @@ const AdminManagement = () => {
                 <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
                   ยกเลิก
                 </Button>
-                <Button onClick={handleSubmit}>
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={csvErrors.length > 0 && importedEmails.length === 0}
+                >
                   ตกลง
                 </Button>
               </div>
