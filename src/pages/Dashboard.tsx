@@ -95,6 +95,11 @@ const filterMapData = (
   categoryFilters: CategoryFilters,
   userType: string
 ): Record<string, number> => {
+  // Ensure provinceDataMap exists
+  if (!provinceDataMap || Object.keys(provinceDataMap).length === 0) {
+    return {};
+  }
+  
   let result = { ...provinceDataMap };
   
   // Apply user type filter
@@ -134,6 +139,17 @@ const filterMapData = (
 
 // Generate table data based on category filters
 const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowData[]; title: string; valueLabel: string } => {
+  // Default data
+  const defaultData = {
+    data: occupationData.map((o) => ({
+      rank: o.rank,
+      name: o.name,
+      value: o.userCount,
+    })),
+    title: 'อาชีพ',
+    valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+  };
+
   // Determine which data to show based on active filter
   // Priority: career > ageRange > province (default to occupation if all selected)
   
@@ -171,7 +187,7 @@ const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowDa
   
   if (categoryFilters.province !== 'all') {
     // Show province data
-    const value = provinceDataMap[categoryFilters.province] || 0;
+    const value = provinceDataMap?.[categoryFilters.province] || 0;
     return {
       data: [{ rank: 1, name: categoryFilters.province, value }],
       title: 'จังหวัด',
@@ -180,15 +196,7 @@ const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowDa
   }
   
   // Default: show occupation data
-  return {
-    data: occupationData.map((o) => ({
-      rank: o.rank,
-      name: o.name,
-      value: o.userCount,
-    })),
-    title: 'อาชีพ',
-    valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
-  };
+  return defaultData;
 };
 
 const Dashboard = () => {

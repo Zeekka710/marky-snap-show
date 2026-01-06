@@ -34,11 +34,15 @@ const ProvinceMapSection = ({
 }: ProvinceMapSectionProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   
-  const maxValue = Math.max(...Object.values(filteredProvinceDataMap));
-  const minValue = Math.min(...Object.values(filteredProvinceDataMap));
+  // Ensure we have valid data before processing
+  const safeProvinceData = filteredProvinceDataMap || {};
+  const provinceValues = Object.values(safeProvinceData);
+  
+  const maxValue = provinceValues.length > 0 ? Math.max(...provinceValues) : 0;
+  const minValue = provinceValues.length > 0 ? Math.min(...provinceValues) : 0;
 
   // Get all provinces sorted by value
-  const allProvinces = Object.entries(filteredProvinceDataMap)
+  const allProvinces = Object.entries(safeProvinceData)
     .map(([name, value], index) => ({
       rank: index + 1,
       name,
@@ -53,7 +57,7 @@ const ProvinceMapSection = ({
   );
 
   // Calculate total users based on filtered data
-  const totalUsers = Object.values(filteredProvinceDataMap).reduce((sum, val) => sum + val, 0);
+  const totalUsers = provinceValues.reduce((sum, val) => sum + val, 0);
 
   return (
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm animate-fade-in">
@@ -75,7 +79,7 @@ const ProvinceMapSection = ({
 
       {/* Interactive Map - Full Width */}
       <div className="relative">
-        <ThailandMap provinceData={filteredProvinceDataMap} />
+        <ThailandMap provinceData={safeProvinceData} />
         
         {/* Legend */}
         <div className="absolute bottom-4 left-4 flex items-center gap-2">

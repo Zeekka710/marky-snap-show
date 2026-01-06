@@ -21,14 +21,17 @@ interface OccupationTableProps {
   valueLabel: string;
 }
 
-const OccupationTable = ({ data, title, valueLabel }: OccupationTableProps) => {
+const OccupationTable = ({ data = [], title, valueLabel }: OccupationTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  // Ensure data is always an array
+  const safeData = Array.isArray(data) ? data : [];
+  
+  const totalPages = Math.max(1, Math.ceil(safeData.length / rowsPerPage));
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const currentData = data.slice(startIndex, endIndex);
+  const currentData = safeData.slice(startIndex, endIndex);
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -82,7 +85,7 @@ const OccupationTable = ({ data, title, valueLabel }: OccupationTableProps) => {
                   {item.name}
                 </td>
                 <td className="py-4 px-6 text-sm text-foreground text-right tabular-nums">
-                  {item.value.toLocaleString('th-TH')}
+                  {(item.value ?? 0).toLocaleString('th-TH')}
                 </td>
               </tr>
             ))}
@@ -108,7 +111,7 @@ const OccupationTable = ({ data, title, valueLabel }: OccupationTableProps) => {
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>
-              {startIndex + 1}-{Math.min(endIndex, data.length)} จาก {data.length}
+              {safeData.length > 0 ? `${startIndex + 1}-${Math.min(endIndex, safeData.length)} จาก ${safeData.length}` : '0 จาก 0'}
             </span>
           </div>
 
