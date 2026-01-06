@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -15,42 +14,25 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
-import { ProvinceData } from '@/types/dashboard';
 import ThailandMap from './ThailandMap';
-import { provinceDataMap } from '@/data/thailandGeoData';
 import { Search } from 'lucide-react';
 
 interface ProvinceMapSectionProps {
-  provinces: ProvinceData[];
-  mapFilter: string;
+  provinceData: Record<string, number>;
+  userType: string;
+  onUserTypeChange: (value: string) => void;
+  isDialogOpen: boolean;
+  onDialogOpenChange: (open: boolean) => void;
 }
 
-const ProvinceMapSection = ({ provinces, mapFilter }: ProvinceMapSectionProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+const ProvinceMapSection = ({ 
+  provinceData: filteredProvinceDataMap, 
+  userType, 
+  onUserTypeChange,
+  isDialogOpen,
+  onDialogOpenChange,
+}: ProvinceMapSectionProps) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [userType, setUserType] = useState('registered');
-
-  // Apply multiplier based on user type filter and map filter
-  const getFilteredValue = (value: number) => {
-    let result = value;
-    
-    if (userType === 'active') {
-      result = Math.round(result * 0.72);
-    }
-    
-    // Apply map filter effect
-    if (mapFilter === 'age') {
-      result = Math.round(result * (0.3 + Math.random() * 0.4));
-    } else if (mapFilter === 'career') {
-      result = Math.round(result * (0.2 + Math.random() * 0.5));
-    }
-    
-    return result;
-  };
-
-  const filteredProvinceDataMap = Object.fromEntries(
-    Object.entries(provinceDataMap).map(([name, value]) => [name, getFilteredValue(value)])
-  );
   
   const maxValue = Math.max(...Object.values(filteredProvinceDataMap));
   const minValue = Math.min(...Object.values(filteredProvinceDataMap));
@@ -78,7 +60,7 @@ const ProvinceMapSection = ({ provinces, mapFilter }: ProvinceMapSectionProps) =
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-foreground">ภาพรวมผู้ใช้งานรายจังหวัด</h3>
         <div className="flex items-center gap-3">
-          <Select value={userType} onValueChange={setUserType}>
+          <Select value={userType} onValueChange={onUserTypeChange}>
             <SelectTrigger className="w-[220px]">
               <span className="text-muted-foreground">ภาพรวมผู้ใช้งาน:</span>
               <SelectValue />
@@ -88,12 +70,6 @@ const ProvinceMapSection = ({ provinces, mapFilter }: ProvinceMapSectionProps) =
               <SelectItem value="active">จำนวนผู้ใช้งาน Active</SelectItem>
             </SelectContent>
           </Select>
-          <Button 
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
-            onClick={() => setIsDialogOpen(true)}
-          >
-            ดูอันดับทั้งหมด
-          </Button>
         </div>
       </div>
 
@@ -117,7 +93,7 @@ const ProvinceMapSection = ({ provinces, mapFilter }: ProvinceMapSectionProps) =
       </div>
 
       {/* All Provinces Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={onDialogOpenChange}>
         <DialogContent className="max-w-2xl max-h-[85vh]">
           <DialogHeader>
             <DialogTitle className="text-xl">อันดับจังหวัดทั้งหมด</DialogTitle>

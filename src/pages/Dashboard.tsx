@@ -11,15 +11,18 @@ import TotalUsersCard from '@/components/dashboard/TotalUsersCard';
 import TokenLimitCard from '@/components/dashboard/TokenLimitCard';
 import ProjectDurationCard from '@/components/dashboard/ProjectDurationCard';
 import ProvinceMapSection from '@/components/dashboard/ProvinceMapSection';
-import OccupationTable from '@/components/dashboard/OccupationTable';
+import OccupationTable, { TableRowData } from '@/components/dashboard/OccupationTable';
+import CategoryFilterSection, { CategoryFilters } from '@/components/dashboard/CategoryFilterSection';
 import ActiveUsersChart from '@/components/dashboard/ActiveUsersChart';
 import NewRegisterChart from '@/components/dashboard/NewRegisterChart';
-import { DailyEngagementData, ProvinceData, OccupationData } from '@/types/dashboard';
+import { DailyEngagementData } from '@/types/dashboard';
 import {
   provinceData,
   occupationData,
+  ageDistributionData,
   totalUsersOverview,
 } from '@/data/mockDashboardData';
+import { provinceDataMap } from '@/data/thailandGeoData';
 
 // Mock project data
 const projectName = 'โครงการ AI สำหรับประชาชน';
@@ -87,56 +90,122 @@ const generateNewRegisterData = (dateRange: DateRange | undefined, filters: Filt
   }));
 };
 
-// Filter province data based on map filters
-const filterProvinceData = (data: ProvinceData[], mapFilter: string): ProvinceData[] => {
-  let filtered = [...data];
+// Filter map data based on category filters
+const filterMapData = (
+  categoryFilters: CategoryFilters,
+  userType: string
+): Record<string, number> => {
+  let result = { ...provinceDataMap };
   
-  // Apply different sorting/filtering based on map filter type
-  if (mapFilter === 'age') {
-    // Simulate age-based filtering with different multiplier
-    filtered = filtered.map(p => ({
-      ...p,
-      value: Math.floor(p.value * (0.3 + Math.random() * 0.4)),
-    }));
-  } else if (mapFilter === 'career') {
-    // Simulate career-based filtering with different multiplier
-    filtered = filtered.map(p => ({
-      ...p,
-      value: Math.floor(p.value * (0.2 + Math.random() * 0.5)),
-    }));
+  // Apply user type filter
+  if (userType === 'active') {
+    result = Object.fromEntries(
+      Object.entries(result).map(([name, value]) => [name, Math.round(value * 0.72)])
+    );
   }
   
-  return filtered
-    .sort((a, b) => b.value - a.value)
-    .map((p, i) => ({ ...p, rank: i + 1 }));
+  // Apply province filter
+  if (categoryFilters.province !== 'all') {
+    const selectedProvince = categoryFilters.province;
+    result = Object.fromEntries(
+      Object.entries(result).map(([name, value]) => [
+        name,
+        name === selectedProvince ? value : Math.round(value * 0.1),
+      ])
+    );
+  }
+  
+  // Apply age range filter (simulate effect)
+  if (categoryFilters.ageRange !== 'all') {
+    result = Object.fromEntries(
+      Object.entries(result).map(([name, value]) => [name, Math.round(value * 0.4)])
+    );
+  }
+  
+  // Apply career filter (simulate effect)
+  if (categoryFilters.career !== 'all') {
+    result = Object.fromEntries(
+      Object.entries(result).map(([name, value]) => [name, Math.round(value * 0.3)])
+    );
+  }
+  
+  return result;
 };
 
-// Filter occupation data based on map filters
-const filterOccupationData = (data: OccupationData[], mapFilter: string): OccupationData[] => {
-  let filtered = [...data];
+// Generate table data based on category filters
+const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowData[]; title: string; valueLabel: string } => {
+  // Determine which data to show based on active filter
+  // Priority: career > ageRange > province (default to occupation if all selected)
   
-  if (mapFilter === 'age') {
-    filtered = filtered.map(o => ({
-      ...o,
-      userCount: Math.floor(o.userCount * (0.3 + Math.random() * 0.4)),
-    }));
-  } else if (mapFilter === 'career') {
-    filtered = filtered.map(o => ({
-      ...o,
-      userCount: Math.floor(o.userCount * (0.2 + Math.random() * 0.5)),
-    }));
+  if (categoryFilters.career !== 'all') {
+    // Show specific career data
+    const filteredData = occupationData
+      .filter((o) => o.name === categoryFilters.career)
+      .map((o) => ({
+        rank: 1,
+        name: o.name,
+        value: o.userCount,
+      }));
+    return {
+      data: filteredData.length > 0 ? filteredData : [{ rank: 1, name: categoryFilters.career, value: 0 }],
+      title: 'อาชีพ',
+      valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+    };
   }
   
-  return filtered
-    .sort((a, b) => b.userCount - a.userCount)
-    .map((o, i) => ({ ...o, rank: i + 1 }));
+  if (categoryFilters.ageRange !== 'all') {
+    // Show age range data
+    const filteredData = ageDistributionData
+      .filter((a) => a.ageRange === categoryFilters.ageRange)
+      .map((a, i) => ({
+        rank: i + 1,
+        name: `${a.ageRange} ปี`,
+        value: a.registeredUsers,
+      }));
+    return {
+      data: filteredData.length > 0 ? filteredData : [{ rank: 1, name: `${categoryFilters.ageRange} ปี`, value: 0 }],
+      title: 'ช่วงอายุ',
+      valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+    };
+  }
+  
+  if (categoryFilters.province !== 'all') {
+    // Show province data
+    const value = provinceDataMap[categoryFilters.province] || 0;
+    return {
+      data: [{ rank: 1, name: categoryFilters.province, value }],
+      title: 'จังหวัด',
+      valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+    };
+  }
+  
+  // Default: show occupation data
+  return {
+    data: occupationData.map((o) => ({
+      rank: o.rank,
+      name: o.name,
+      value: o.userCount,
+    })),
+    title: 'อาชีพ',
+    valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+  };
 };
 
 const Dashboard = () => {
   const navigate = useNavigate();
   
-  // Map section filter (Province, Age range, Career)
-  const [mapFilter, setMapFilter] = useState('province');
+  // Category filters for map and table (Province, Age range, Career)
+  const [categoryFilters, setCategoryFilters] = useState<CategoryFilters>({
+    province: 'all',
+    ageRange: 'all',
+    career: 'all',
+  });
+  
+  // User type filter for map
+  const [userType, setUserType] = useState('registered');
+  
+  // Dialog state for viewing all provinces
+  const [isViewAllDialogOpen, setIsViewAllDialogOpen] = useState(false);
   
   // Chart section filters (Date, Age, Region, Province)
   const [chartFilters, setChartFilters] = useState<FilterValues>({
@@ -158,9 +227,11 @@ const Dashboard = () => {
   const dailyEngagementData = useMemo(() => generateDailyData(chartFilters.dateRange, chartFilters), [chartFilters]);
   const newRegisterData = useMemo(() => generateNewRegisterData(chartFilters.dateRange, chartFilters), [chartFilters]);
   
-  // Memoize map data (affected by mapFilter)
-  const filteredProvinceData = useMemo(() => filterProvinceData(provinceData, mapFilter), [mapFilter]);
-  const filteredOccupationData = useMemo(() => filterOccupationData(occupationData, mapFilter), [mapFilter]);
+  // Memoize map data (affected by categoryFilters and userType)
+  const filteredMapData = useMemo(() => filterMapData(categoryFilters, userType), [categoryFilters, userType]);
+  
+  // Memoize table data (affected by categoryFilters)
+  const tableConfig = useMemo(() => generateTableData(categoryFilters), [categoryFilters]);
 
   // Calculate accumulated new register
   const accumNewRegister = useMemo(() => {
@@ -201,16 +272,28 @@ const Dashboard = () => {
           <TokenLimitCard models={tokenModels} />
         </div>
 
-        {/* Row 4: Map + Occupation Table */}
+        {/* Row 4: Category Filters */}
+        <div className="mb-6">
+          <CategoryFilterSection 
+            filters={categoryFilters}
+            onFiltersChange={setCategoryFilters}
+            onViewAll={() => setIsViewAllDialogOpen(true)}
+          />
+        </div>
+
+        {/* Row 5: Map + Table */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <ProvinceMapSection 
-            provinces={filteredProvinceData} 
-            mapFilter={mapFilter}
+            provinceData={filteredMapData}
+            userType={userType}
+            onUserTypeChange={setUserType}
+            isDialogOpen={isViewAllDialogOpen}
+            onDialogOpenChange={setIsViewAllDialogOpen}
           />
           <OccupationTable 
-            data={filteredOccupationData} 
-            mapFilter={mapFilter}
-            onMapFilterChange={setMapFilter}
+            data={tableConfig.data}
+            title={tableConfig.title}
+            valueLabel={tableConfig.valueLabel}
           />
         </div>
 

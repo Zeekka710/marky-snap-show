@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { OccupationData } from '@/types/dashboard';
 import { ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Select,
@@ -10,13 +9,19 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 
-interface OccupationTableProps {
-  data: OccupationData[];
-  mapFilter: string;
-  onMapFilterChange: (filter: string) => void;
+export interface TableRowData {
+  rank: number;
+  name: string;
+  value: number;
 }
 
-const OccupationTable = ({ data, mapFilter, onMapFilterChange }: OccupationTableProps) => {
+interface OccupationTableProps {
+  data: TableRowData[];
+  title: string;
+  valueLabel: string;
+}
+
+const OccupationTable = ({ data, title, valueLabel }: OccupationTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -41,20 +46,9 @@ const OccupationTable = ({ data, mapFilter, onMapFilterChange }: OccupationTable
   return (
     <div className="animate-fade-in">
       <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-        {/* Header with Filter */}
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h3 className="text-lg font-semibold text-foreground">ข้อมูลผู้ใช้งานตามหมวดหมู่</h3>
-          <Select value={mapFilter} onValueChange={onMapFilterChange}>
-            <SelectTrigger className="w-[180px]">
-              <span className="text-muted-foreground">กรองตาม:</span>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-popover z-50">
-              <SelectItem value="province">Province</SelectItem>
-              <SelectItem value="age">Age range</SelectItem>
-              <SelectItem value="career">Career</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
         <table className="w-full">
@@ -67,10 +61,10 @@ const OccupationTable = ({ data, mapFilter, onMapFilterChange }: OccupationTable
                 </div>
               </th>
               <th className="text-left py-4 px-6 text-sm font-medium text-muted-foreground">
-                อาชีพ
+                {title}
               </th>
               <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">
-                จำนวนผู้ใช้งาน (บัญชี)
+                {valueLabel}
               </th>
             </tr>
           </thead>
@@ -88,7 +82,7 @@ const OccupationTable = ({ data, mapFilter, onMapFilterChange }: OccupationTable
                   {item.name}
                 </td>
                 <td className="py-4 px-6 text-sm text-foreground text-right tabular-nums">
-                  {item.userCount.toLocaleString('th-TH')}
+                  {item.value.toLocaleString('th-TH')}
                 </td>
               </tr>
             ))}
