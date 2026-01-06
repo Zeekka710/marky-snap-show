@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { DateRange } from 'react-day-picker';
-import { subMonths, eachDayOfInterval, format } from 'date-fns';
+import { subMonths, eachDayOfInterval, format, addMonths } from 'date-fns';
 import { th } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -9,6 +9,7 @@ import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import FilterBar, { FilterValues } from '@/components/dashboard/FilterBar';
 import TotalUsersCard from '@/components/dashboard/TotalUsersCard';
 import TokenLimitCard from '@/components/dashboard/TokenLimitCard';
+import ProjectDurationCard from '@/components/dashboard/ProjectDurationCard';
 import ProvinceMapSection from '@/components/dashboard/ProvinceMapSection';
 import OccupationTable from '@/components/dashboard/OccupationTable';
 import ActiveUsersChart from '@/components/dashboard/ActiveUsersChart';
@@ -21,11 +22,18 @@ import {
   totalUsersOverview,
 } from '@/data/mockDashboardData';
 
-// Mock token models data
+// Mock project data
+const projectName = 'โครงการ AI สำหรับประชาชน';
+const projectStartDate = new Date('2024-11-26');
+const projectEndDate = addMonths(projectStartDate, 1);
+
+// Mock token models data with more models for horizontal scroll
 const tokenModels = [
   { name: 'Chat GPT 5.2', used: 600000, total: 1000000 },
-  { name: 'Chat GPT 5.2', used: 600000, total: 1000000 },
-  { name: 'Chat GPT 5.2', used: 600000, total: 1000000 },
+  { name: 'Claude 3.5', used: 450000, total: 800000 },
+  { name: 'Gemini Pro', used: 300000, total: 500000 },
+  { name: 'Llama 3.1', used: 200000, total: 600000 },
+  { name: 'Mistral', used: 150000, total: 400000 },
 ];
 
 // Generate mock daily data based on date range and filters
@@ -34,7 +42,6 @@ const generateDailyData = (dateRange: DateRange | undefined, filters: FilterValu
   
   const days = eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
   
-  // Apply multiplier based on filters
   const getMultiplier = () => {
     let multiplier = 1;
     if (filters.ageRange !== 'all') multiplier *= 0.2;
@@ -81,36 +88,22 @@ const generateNewRegisterData = (dateRange: DateRange | undefined, filters: Filt
   }));
 };
 
-// Filter province data
-const filterProvinceData = (data: ProvinceData[], filters: FilterValues): ProvinceData[] => {
+// Filter province data based on map filters
+const filterProvinceData = (data: ProvinceData[], mapFilter: string): ProvinceData[] => {
   let filtered = [...data];
   
-  const regionProvinces: Record<string, string[]> = {
-    central: ['กรุงเทพมหานคร', 'นนทบุรี', 'ปทุมธานี', 'สมุทรปราการ', 'พระนครศรีอยุธยา', 'นครปฐม', 'สระบุรี', 'ลพบุรี'],
-    north: ['เชียงใหม่', 'เชียงราย', 'ลำปาง', 'ลำพูน', 'แม่ฮ่องสอน', 'พิษณุโลก', 'เพชรบูรณ์', 'นครสวรรค์'],
-    northeast: ['นครราชสีมา', 'ขอนแก่น', 'อุดรธานี', 'อุบลราชธานี', 'บุรีรัมย์', 'สุรินทร์', 'ศรีสะเกษ', 'ร้อยเอ็ด'],
-    east: ['ชลบุรี', 'ระยอง', 'จันทบุรี', 'ตราด', 'ฉะเชิงเทรา', 'ปราจีนบุรี', 'สระแก้ว'],
-    west: ['กาญจนบุรี', 'ราชบุรี', 'เพชรบุรี', 'ประจวบคีรีขันธ์', 'ตาก'],
-    south: ['สงขลา', 'ภูเก็ต', 'สุราษฎร์ธานี', 'นครศรีธรรมราช', 'กระบี่', 'ตรัง', 'พัทลุง'],
-  };
-  
-  if (filters.region !== 'all') {
-    const allowedProvinces = regionProvinces[filters.region] || [];
-    filtered = filtered.filter(p => allowedProvinces.includes(p.name));
-  }
-  
-  if (filters.province !== 'all') {
-    filtered = filtered.filter(p => p.name === filters.province);
-  }
-  
-  let multiplier = 1;
-  if (filters.ageRange !== 'all') multiplier *= 0.2;
-  if (filters.occupation !== 'all') multiplier *= 0.1;
-  
-  if (multiplier !== 1) {
+  // Apply different sorting/filtering based on map filter type
+  if (mapFilter === 'age') {
+    // Simulate age-based filtering with different multiplier
     filtered = filtered.map(p => ({
       ...p,
-      value: Math.floor(p.value * multiplier),
+      value: Math.floor(p.value * (0.3 + Math.random() * 0.4)),
+    }));
+  } else if (mapFilter === 'career') {
+    // Simulate career-based filtering with different multiplier
+    filtered = filtered.map(p => ({
+      ...p,
+      value: Math.floor(p.value * (0.2 + Math.random() * 0.5)),
     }));
   }
   
@@ -119,23 +112,19 @@ const filterProvinceData = (data: ProvinceData[], filters: FilterValues): Provin
     .map((p, i) => ({ ...p, rank: i + 1 }));
 };
 
-// Filter occupation data
-const filterOccupationData = (data: OccupationData[], filters: FilterValues): OccupationData[] => {
+// Filter occupation data based on map filters
+const filterOccupationData = (data: OccupationData[], mapFilter: string): OccupationData[] => {
   let filtered = [...data];
   
-  if (filters.occupation !== 'all') {
-    filtered = filtered.filter(o => o.name.includes(filters.occupation));
-  }
-  
-  let multiplier = 1;
-  if (filters.ageRange !== 'all') multiplier *= 0.2;
-  if (filters.region !== 'all') multiplier *= 0.15;
-  if (filters.province !== 'all') multiplier *= 0.05;
-  
-  if (multiplier !== 1) {
+  if (mapFilter === 'age') {
     filtered = filtered.map(o => ({
       ...o,
-      userCount: Math.floor(o.userCount * multiplier),
+      userCount: Math.floor(o.userCount * (0.3 + Math.random() * 0.4)),
+    }));
+  } else if (mapFilter === 'career') {
+    filtered = filtered.map(o => ({
+      ...o,
+      userCount: Math.floor(o.userCount * (0.2 + Math.random() * 0.5)),
     }));
   }
   
@@ -144,20 +133,14 @@ const filterOccupationData = (data: OccupationData[], filters: FilterValues): Oc
     .map((o, i) => ({ ...o, rank: i + 1 }));
 };
 
-// Filter total users
-const filterTotalUsers = (total: number, filters: FilterValues): number => {
-  let multiplier = 1;
-  if (filters.ageRange !== 'all') multiplier *= 0.2;
-  if (filters.region !== 'all') multiplier *= 0.15;
-  if (filters.province !== 'all') multiplier *= 0.05;
-  if (filters.occupation !== 'all') multiplier *= 0.1;
-  return Math.floor(total * multiplier);
-};
-
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [selectedFilter, setSelectedFilter] = useState('province');
-  const [filters, setFilters] = useState<FilterValues>({
+  
+  // Map section filter (Province, Age range, Career)
+  const [mapFilter, setMapFilter] = useState('province');
+  
+  // Chart section filters (Date, Age, Region, Province)
+  const [chartFilters, setChartFilters] = useState<FilterValues>({
     dateRange: {
       from: subMonths(new Date(), 1),
       to: new Date(),
@@ -168,16 +151,17 @@ const Dashboard = () => {
     occupation: 'all',
   });
 
-  const handleFilterChange = useCallback((newFilters: FilterValues) => {
-    setFilters(newFilters);
+  const handleChartFilterChange = useCallback((newFilters: FilterValues) => {
+    setChartFilters(newFilters);
   }, []);
 
-  // Memoize filtered data
-  const dailyEngagementData = useMemo(() => generateDailyData(filters.dateRange, filters), [filters]);
-  const newRegisterData = useMemo(() => generateNewRegisterData(filters.dateRange, filters), [filters]);
-  const filteredProvinceData = useMemo(() => filterProvinceData(provinceData, filters), [filters]);
-  const filteredOccupationData = useMemo(() => filterOccupationData(occupationData, filters), [filters]);
-  const filteredTotalUsers = useMemo(() => filterTotalUsers(totalUsersOverview, filters), [filters]);
+  // Memoize chart data (affected by chartFilters)
+  const dailyEngagementData = useMemo(() => generateDailyData(chartFilters.dateRange, chartFilters), [chartFilters]);
+  const newRegisterData = useMemo(() => generateNewRegisterData(chartFilters.dateRange, chartFilters), [chartFilters]);
+  
+  // Memoize map data (affected by mapFilter)
+  const filteredProvinceData = useMemo(() => filterProvinceData(provinceData, mapFilter), [mapFilter]);
+  const filteredOccupationData = useMemo(() => filterOccupationData(occupationData, mapFilter), [mapFilter]);
 
   // Calculate accumulated new register
   const accumNewRegister = useMemo(() => {
@@ -202,31 +186,42 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-foreground">Usage Trend</h1>
         </div>
 
-        {/* Top Section: Accum users + Token Limit */}
+        {/* Row 1: Project Title */}
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-foreground">{projectName}</h2>
+        </div>
+
+        {/* Row 2: Accum Users + Project Duration */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <TotalUsersCard totalUsers={filteredTotalUsers} />
+          <TotalUsersCard totalUsers={totalUsersOverview} />
+          <ProjectDurationCard startDate={projectStartDate} endDate={projectEndDate} />
+        </div>
+
+        {/* Row 3: Token Limit per model */}
+        <div className="mb-6">
           <TokenLimitCard models={tokenModels} />
         </div>
-        
-        {/* Filter Bar */}
-        <FilterBar onFilterChange={handleFilterChange} />
 
-        {/* Middle Section: Map + Filter Bullets + Table */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Left: Thailand Map */}
-          <ProvinceMapSection provinces={filteredProvinceData} />
-          
-          {/* Right: Filter Bullets + Occupation Table */}
-          <div className="space-y-6">
-            <FilterBullets 
-              selectedFilter={selectedFilter}
-              onFilterChange={setSelectedFilter}
-            />
-            <OccupationTable data={filteredOccupationData} />
-          </div>
+        {/* Row 4: Filter Bullets for Map */}
+        <div className="mb-6">
+          <FilterBullets 
+            selectedFilter={mapFilter}
+            onFilterChange={setMapFilter}
+          />
         </div>
 
-        {/* Bottom Section: Two Charts side by side */}
+        {/* Row 5: Map + Top 10 Table */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <ProvinceMapSection provinces={filteredProvinceData} />
+          <OccupationTable data={filteredOccupationData} />
+        </div>
+
+        {/* Row 6: Filter Bar for Charts */}
+        <div className="mb-6">
+          <FilterBar onFilterChange={handleChartFilterChange} />
+        </div>
+
+        {/* Row 7: Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ActiveUsersChart data={dailyEngagementData} />
           <NewRegisterChart data={newRegisterData} accumTotal={accumNewRegister} />

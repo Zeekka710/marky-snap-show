@@ -1,3 +1,5 @@
+import { ArrowRight } from 'lucide-react';
+
 interface FilterBulletsProps {
   selectedFilter: string;
   onFilterChange: (filter: string) => void;
@@ -19,9 +21,36 @@ const ageRanges = [
   '65+',
 ];
 
+const careerOptions = [
+  'นักเรียน/นักศึกษา',
+  'พนักงานบริษัทเอกชน',
+  'ข้าราชการ/รัฐวิสาหกิจ',
+  'ธุรกิจส่วนตัว',
+  'ฟรีแลนซ์',
+  'อื่นๆ',
+];
+
+const provinceInfo = [
+  'จังหวัดทั้งหมด 77 จังหวัด',
+  'แบ่งตามภูมิภาค',
+];
+
 const FilterBullets = ({ selectedFilter, onFilterChange }: FilterBulletsProps) => {
+  const getFilterDetails = () => {
+    switch (selectedFilter) {
+      case 'age':
+        return ageRanges;
+      case 'career':
+        return careerOptions;
+      case 'province':
+      default:
+        return provinceInfo;
+    }
+  };
+
   return (
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
+      <p className="text-sm text-muted-foreground mb-4">ตัวกรองข้อมูลแผนที่</p>
       <div className="flex items-start gap-8">
         {/* Filter options with bullets */}
         <div className="space-y-3">
@@ -35,25 +64,23 @@ const FilterBullets = ({ selectedFilter, onFilterChange }: FilterBulletsProps) =
               }`}
               onClick={() => onFilterChange(option.id)}
             >
-              <span className="text-lg">•</span>
+              <span className={`w-2 h-2 rounded-full ${
+                selectedFilter === option.id ? 'bg-primary' : 'bg-muted-foreground'
+              }`} />
               <span className="text-sm">{option.label}</span>
             </div>
           ))}
         </div>
 
-        {/* Age range display (shown when age filter is selected) */}
-        {selectedFilter === 'age' && (
-          <div className="flex items-center gap-4">
-            <svg className="w-8 h-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-            <div className="space-y-1">
-              {ageRanges.map((range, index) => (
-                <p key={index} className="text-sm text-muted-foreground">{range}</p>
-              ))}
-            </div>
+        {/* Details display based on selected filter */}
+        <div className="flex items-center gap-4">
+          <ArrowRight className="w-5 h-5 text-muted-foreground" />
+          <div className="space-y-1">
+            {getFilterDetails().map((item, index) => (
+              <p key={index} className="text-sm text-muted-foreground">{item}</p>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
