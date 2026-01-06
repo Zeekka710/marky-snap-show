@@ -10,9 +10,6 @@ interface TokenLimitCardProps {
 
 const TokenLimitCard = ({ models }: TokenLimitCardProps) => {
   const formatNumber = (num: number): string => {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' Token';
-    }
     return num.toLocaleString('th-TH') + ' Token';
   };
 
@@ -23,15 +20,15 @@ const TokenLimitCard = ({ models }: TokenLimitCardProps) => {
   return (
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
       <p className="text-sm text-muted-foreground mb-4">Token Limit per model</p>
-      <div className="flex gap-4 overflow-x-auto">
+      <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
         {models.map((model, index) => (
           <div 
             key={index}
-            className="flex-shrink-0 bg-muted/30 rounded-lg p-4 min-w-[140px] border border-border/50"
+            className="flex-shrink-0 bg-muted/30 rounded-lg p-4 min-w-[160px] border border-border/50"
           >
-            <p className="text-sm font-medium text-foreground mb-2">{model.name}</p>
-            <p className="text-xs text-muted-foreground">{formatRemaining(model.total - model.used)}</p>
-            <p className="text-xs text-muted-foreground">{formatNumber(model.total)}</p>
+            <p className="text-sm font-medium text-foreground mb-3">{model.name}</p>
+            <p className="text-sm font-semibold text-primary">{formatRemaining(model.total - model.used)}</p>
+            <p className="text-xs text-muted-foreground mt-1">{formatNumber(model.total)}</p>
           </div>
         ))}
       </div>
