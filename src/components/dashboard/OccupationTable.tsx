@@ -12,9 +12,11 @@ import { Button } from '@/components/ui/button';
 
 interface OccupationTableProps {
   data: OccupationData[];
+  mapFilter: string;
+  onMapFilterChange: (filter: string) => void;
 }
 
-const OccupationTable = ({ data }: OccupationTableProps) => {
+const OccupationTable = ({ data, mapFilter, onMapFilterChange }: OccupationTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -39,6 +41,22 @@ const OccupationTable = ({ data }: OccupationTableProps) => {
   return (
     <div className="animate-fade-in">
       <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+        {/* Header with Filter */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">ข้อมูลผู้ใช้งานตามหมวดหมู่</h3>
+          <Select value={mapFilter} onValueChange={onMapFilterChange}>
+            <SelectTrigger className="w-[180px]">
+              <span className="text-muted-foreground">กรองตาม:</span>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-popover z-50">
+              <SelectItem value="province">Province</SelectItem>
+              <SelectItem value="age">Age range</SelectItem>
+              <SelectItem value="career">Career</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
@@ -85,7 +103,7 @@ const OccupationTable = ({ data }: OccupationTableProps) => {
               <SelectTrigger className="w-[70px] h-8">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover z-50">
                 <SelectItem value="5">5</SelectItem>
                 <SelectItem value="10">10</SelectItem>
                 <SelectItem value="20">20</SelectItem>

@@ -201,14 +201,17 @@ const Dashboard = () => {
           <TokenLimitCard models={tokenModels} />
         </div>
 
-        {/* Row 4: Map + Top 10 Table */}
+        {/* Row 4: Map + Occupation Table */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <ProvinceMapSection 
             provinces={filteredProvinceData} 
             mapFilter={mapFilter}
+          />
+          <OccupationTable 
+            data={filteredOccupationData} 
+            mapFilter={mapFilter}
             onMapFilterChange={setMapFilter}
           />
-          <OccupationTable data={filteredOccupationData} />
         </div>
 
         {/* Row 6: Filter Bar for Charts */}
