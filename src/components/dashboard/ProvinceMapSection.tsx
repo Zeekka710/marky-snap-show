@@ -18,17 +18,62 @@ import { Input } from '@/components/ui/input';
 import { ProvinceData } from '@/types/dashboard';
 import ThailandMap from './ThailandMap';
 import { provinceDataMap } from '@/data/thailandGeoData';
-import { Search } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 
 interface ProvinceMapSectionProps {
   provinces: ProvinceData[];
+  mapFilter: string;
+  onMapFilterChange: (filter: string) => void;
 }
 
-const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
+const filterOptions = [
+  { id: 'province', label: 'Province' },
+  { id: 'age', label: 'Age range' },
+  { id: 'career', label: 'Career' },
+];
+
+const ageRanges = [
+  '15-17 (Teens)',
+  '18-24 (Young adults)',
+  '25-34',
+  '35-44',
+  '45-54',
+  '55-64',
+  '65+',
+];
+
+const careerOptions = [
+  'นักเรียน/นักศึกษา',
+  'พนักงานบริษัทเอกชน',
+  'ข้าราชการ/รัฐวิสาหกิจ',
+  'ธุรกิจส่วนตัว',
+  'ฟรีแลนซ์',
+  'อื่นๆ',
+];
+
+const provinceInfo = [
+  'จังหวัดทั้งหมด 77 จังหวัด',
+  'แบ่งตามภูมิภาค',
+];
+
+const ProvinceMapSection = ({ provinces, mapFilter, onMapFilterChange }: ProvinceMapSectionProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [userType, setUserType] = useState('registered');
   
+  // Get filter details based on selected filter
+  const getFilterDetails = () => {
+    switch (mapFilter) {
+      case 'age':
+        return ageRanges;
+      case 'career':
+        return careerOptions;
+      case 'province':
+      default:
+        return provinceInfo;
+    }
+  };
+
   // Apply multiplier based on user type filter
   const getFilteredValue = (value: number) => {
     if (userType === 'active') {
@@ -83,6 +128,39 @@ const ProvinceMapSection = ({ provinces }: ProvinceMapSectionProps) => {
           >
             ดูอันดับทั้งหมด
           </Button>
+        </div>
+      </div>
+
+      {/* Filter Bullets inside map section */}
+      <div className="mb-6 p-4 bg-muted/30 rounded-lg border border-border/50">
+        <p className="text-sm text-muted-foreground mb-3">ตัวกรองข้อมูลแผนที่</p>
+        <div className="flex items-start gap-8">
+          <div className="space-y-2">
+            {filterOptions.map((option) => (
+              <div 
+                key={option.id}
+                className={`flex items-center gap-2 cursor-pointer transition-colors ${
+                  mapFilter === option.id 
+                    ? 'text-foreground font-medium' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => onMapFilterChange(option.id)}
+              >
+                <span className={`w-2 h-2 rounded-full ${
+                  mapFilter === option.id ? 'bg-primary' : 'bg-muted-foreground'
+                }`} />
+                <span className="text-sm">{option.label}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-4">
+            <ArrowRight className="w-5 h-5 text-muted-foreground" />
+            <div className="space-y-1">
+              {getFilterDetails().map((item, index) => (
+                <p key={index} className="text-sm text-muted-foreground">{item}</p>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

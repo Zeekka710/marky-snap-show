@@ -14,7 +14,6 @@ import ProvinceMapSection from '@/components/dashboard/ProvinceMapSection';
 import OccupationTable from '@/components/dashboard/OccupationTable';
 import ActiveUsersChart from '@/components/dashboard/ActiveUsersChart';
 import NewRegisterChart from '@/components/dashboard/NewRegisterChart';
-import FilterBullets from '@/components/dashboard/FilterBullets';
 import { DailyEngagementData, ProvinceData, OccupationData } from '@/types/dashboard';
 import {
   provinceData,
@@ -202,17 +201,13 @@ const Dashboard = () => {
           <TokenLimitCard models={tokenModels} />
         </div>
 
-        {/* Row 4: Filter Bullets for Map */}
-        <div className="mb-6">
-          <FilterBullets 
-            selectedFilter={mapFilter}
-            onFilterChange={setMapFilter}
-          />
-        </div>
-
-        {/* Row 5: Map + Top 10 Table */}
+        {/* Row 4: Map + Top 10 Table */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <ProvinceMapSection provinces={filteredProvinceData} />
+          <ProvinceMapSection 
+            provinces={filteredProvinceData} 
+            mapFilter={mapFilter}
+            onMapFilterChange={setMapFilter}
+          />
           <OccupationTable data={filteredOccupationData} />
         </div>
 
