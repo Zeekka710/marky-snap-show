@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { provinceData, occupationData, ageDistributionData } from '@/data/mockDashboardData';
+import { provinceDataMap } from '@/data/thailandGeoData';
 
 export interface CategoryFilters {
   province: string;
@@ -22,25 +23,37 @@ interface CategoryFilterSectionProps {
 
 const CategoryFilterSection = ({ filters, onFiltersChange, onViewAll }: CategoryFilterSectionProps) => {
   const handleProvinceChange = (value: string) => {
-    onFiltersChange({ ...filters, province: value });
+    // Reset other filters when province changes (OR logic)
+    onFiltersChange({ province: value, ageRange: 'all', career: 'all' });
   };
 
   const handleAgeRangeChange = (value: string) => {
-    onFiltersChange({ ...filters, ageRange: value });
+    // Reset other filters when age range changes (OR logic)
+    onFiltersChange({ province: 'all', ageRange: value, career: 'all' });
   };
 
   const handleCareerChange = (value: string) => {
-    onFiltersChange({ ...filters, career: value });
+    // Reset other filters when career changes (OR logic)
+    onFiltersChange({ province: 'all', ageRange: 'all', career: value });
   };
 
-  // Get unique provinces from data
-  const provinces = provinceData.map((p) => p.name);
+  // Get all provinces from thailand geo data (77 provinces)
+  const provinces = Object.keys(provinceDataMap || {}).sort((a, b) => a.localeCompare(b, 'th'));
   
   // Get age ranges from data
   const ageRanges = ageDistributionData.map((a) => a.ageRange);
   
   // Get unique careers from data
   const careers = occupationData.map((o) => o.name);
+  
+  // Determine which filter is currently active
+  const activeFilter = filters.career !== 'all' 
+    ? 'career' 
+    : filters.ageRange !== 'all' 
+      ? 'ageRange' 
+      : filters.province !== 'all' 
+        ? 'province' 
+        : 'none';
 
   return (
     <div className="bg-card rounded-xl border border-border shadow-sm p-4 animate-fade-in">
