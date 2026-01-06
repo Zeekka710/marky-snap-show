@@ -28,11 +28,11 @@ const projectEndDate = addMonths(projectStartDate, 1);
 
 // Mock token models data with more models for horizontal scroll
 const tokenModels = [
-  { name: 'Chat GPT 5.2', used: 600000, total: 1000000 },
-  { name: 'Claude 3.5', used: 450000, total: 800000 },
-  { name: 'Gemini Pro', used: 300000, total: 500000 },
-  { name: 'Llama 3.1', used: 200000, total: 600000 },
-  { name: 'Mistral', used: 150000, total: 400000 },
+  { name: 'ChatGPT o3', used: 600000, total: 1000000 },
+  { name: 'ChatGPT 5.1', used: 450000, total: 800000 },
+  { name: 'Gemini 3 Pro', used: 300000, total: 500000 },
+  { name: 'Gemini 3 Flash', used: 200000, total: 600000 },
+  { name: 'Claude Sonnet 4.5', used: 150000, total: 400000 },
 ];
 
 // Generate mock daily data based on date range and filters
