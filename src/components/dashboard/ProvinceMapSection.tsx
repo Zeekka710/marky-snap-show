@@ -23,20 +23,29 @@ import { Search } from 'lucide-react';
 interface ProvinceMapSectionProps {
   provinces: ProvinceData[];
   mapFilter: string;
-  onMapFilterChange: (filter: string) => void;
 }
 
-const ProvinceMapSection = ({ provinces, mapFilter, onMapFilterChange }: ProvinceMapSectionProps) => {
+const ProvinceMapSection = ({ provinces, mapFilter }: ProvinceMapSectionProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [userType, setUserType] = useState('registered');
 
-  // Apply multiplier based on user type filter
+  // Apply multiplier based on user type filter and map filter
   const getFilteredValue = (value: number) => {
+    let result = value;
+    
     if (userType === 'active') {
-      return Math.round(value * 0.72); // Active users are ~72% of registered
+      result = Math.round(result * 0.72);
     }
-    return value;
+    
+    // Apply map filter effect
+    if (mapFilter === 'age') {
+      result = Math.round(result * (0.3 + Math.random() * 0.4));
+    } else if (mapFilter === 'career') {
+      result = Math.round(result * (0.2 + Math.random() * 0.5));
+    }
+    
+    return result;
   };
 
   const filteredProvinceDataMap = Object.fromEntries(
@@ -69,19 +78,6 @@ const ProvinceMapSection = ({ provinces, mapFilter, onMapFilterChange }: Provinc
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-foreground">ภาพรวมผู้ใช้งานรายจังหวัด</h3>
         <div className="flex items-center gap-3">
-          {/* Map Filter Dropdown */}
-          <Select value={mapFilter} onValueChange={onMapFilterChange}>
-            <SelectTrigger className="w-[180px]">
-              <span className="text-muted-foreground">กรองตาม:</span>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-popover z-50">
-              <SelectItem value="province">Province</SelectItem>
-              <SelectItem value="age">Age range</SelectItem>
-              <SelectItem value="career">Career</SelectItem>
-            </SelectContent>
-          </Select>
-
           <Select value={userType} onValueChange={setUserType}>
             <SelectTrigger className="w-[220px]">
               <span className="text-muted-foreground">ภาพรวมผู้ใช้งาน:</span>
@@ -101,40 +97,21 @@ const ProvinceMapSection = ({ provinces, mapFilter, onMapFilterChange }: Provinc
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Interactive Map */}
-        <div className="relative">
-          <ThailandMap provinceData={filteredProvinceDataMap} />
-          
-          {/* Legend */}
-          <div className="absolute bottom-4 left-4 flex items-center gap-2">
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-muted-foreground mb-1">{maxValue.toLocaleString('th-TH')}</span>
-              <div 
-                className="w-3 h-24 rounded" 
-                style={{ 
-                  background: 'linear-gradient(to bottom, hsl(217, 91%, 23%), hsl(217, 91%, 83%))' 
-                }} 
-              />
-              <span className="text-xs text-muted-foreground mt-1">{minValue.toLocaleString('th-TH')}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Top 10 Rankings */}
-          <div>
-            <h4 className="text-base font-semibold text-foreground mb-4">10 อันดับสูงสุด</h4>
-            <div className="space-y-3">
-              {allProvinces.slice(0, 10).map((province) => (
-                <div key={province.rank} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                  <span className="text-sm text-foreground">
-                    {province.rank}. {province.name}
-                  </span>
-                  <span className="text-sm font-medium text-foreground tabular-nums">
-                    {province.value.toLocaleString('th-TH')}
-                  </span>
-                </div>
-            ))}
+      {/* Interactive Map - Full Width */}
+      <div className="relative">
+        <ThailandMap provinceData={filteredProvinceDataMap} />
+        
+        {/* Legend */}
+        <div className="absolute bottom-4 left-4 flex items-center gap-2">
+          <div className="flex flex-col items-center">
+            <span className="text-xs text-muted-foreground mb-1">{maxValue.toLocaleString('th-TH')}</span>
+            <div 
+              className="w-3 h-24 rounded" 
+              style={{ 
+                background: 'linear-gradient(to bottom, hsl(217, 91%, 23%), hsl(217, 91%, 83%))' 
+              }} 
+            />
+            <span className="text-xs text-muted-foreground mt-1">{minValue.toLocaleString('th-TH')}</span>
           </div>
         </div>
       </div>
