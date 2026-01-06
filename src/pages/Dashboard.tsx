@@ -7,26 +7,26 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import FilterBar, { FilterValues } from '@/components/dashboard/FilterBar';
-import DashboardTabs from '@/components/dashboard/DashboardTabs';
-import MetricCard from '@/components/dashboard/MetricCard';
 import TotalUsersCard from '@/components/dashboard/TotalUsersCard';
+import TokenLimitCard from '@/components/dashboard/TokenLimitCard';
 import ProvinceMapSection from '@/components/dashboard/ProvinceMapSection';
-import DemographicsCharts from '@/components/dashboard/DemographicsCharts';
 import OccupationTable from '@/components/dashboard/OccupationTable';
-import EngagementChart from '@/components/dashboard/EngagementChart';
-import { DailyEngagementData, MetricCard as MetricCardType, ProvinceData, OccupationData, AgeDistributionData, OccupationDistributionData } from '@/types/dashboard';
+import ActiveUsersChart from '@/components/dashboard/ActiveUsersChart';
+import NewRegisterChart from '@/components/dashboard/NewRegisterChart';
+import FilterBullets from '@/components/dashboard/FilterBullets';
+import { DailyEngagementData, ProvinceData, OccupationData } from '@/types/dashboard';
 import {
-  summaryMetrics,
   provinceData,
   occupationData,
-  ageDistributionData,
-  occupationDistributionData,
   totalUsersOverview,
-  usersByFeatureData,
-  usersByModelData,
-  totalUsersByUsage,
 } from '@/data/mockDashboardData';
-import TokenDonutCharts, { TokenByFeatureData, TokenByModelData } from '@/components/dashboard/TokenDonutCharts';
+
+// Mock token models data
+const tokenModels = [
+  { name: 'Chat GPT 5.2', used: 600000, total: 1000000 },
+  { name: 'Chat GPT 5.2', used: 600000, total: 1000000 },
+  { name: 'Chat GPT 5.2', used: 600000, total: 1000000 },
+];
 
 // Generate mock daily data based on date range and filters
 const generateDailyData = (dateRange: DateRange | undefined, filters: FilterValues): DailyEngagementData[] => {
@@ -55,20 +55,29 @@ const generateDailyData = (dateRange: DateRange | undefined, filters: FilterValu
   }));
 };
 
-// Filter metrics based on filters
-const filterMetrics = (metrics: MetricCardType[], filters: FilterValues): MetricCardType[] => {
-  let multiplier = 1;
-  if (filters.ageRange !== 'all') multiplier *= 0.2;
-  if (filters.region !== 'all') multiplier *= 0.15;
-  if (filters.province !== 'all') multiplier *= 0.05;
-  if (filters.occupation !== 'all') multiplier *= 0.1;
+// Generate new register data
+const generateNewRegisterData = (dateRange: DateRange | undefined, filters: FilterValues): DailyEngagementData[] => {
+  if (!dateRange?.from || !dateRange?.to) return [];
   
-  if (multiplier === 1) return metrics;
+  const days = eachDayOfInterval({ start: dateRange.from, end: dateRange.to });
   
-  return metrics.map(metric => ({
-    ...metric,
-    value: Math.floor(metric.value * multiplier),
-    previous_period_value: Math.floor(metric.previous_period_value * multiplier),
+  const getMultiplier = () => {
+    let multiplier = 1;
+    if (filters.ageRange !== 'all') multiplier *= 0.2;
+    if (filters.region !== 'all') multiplier *= 0.15;
+    if (filters.province !== 'all') multiplier *= 0.05;
+    if (filters.occupation !== 'all') multiplier *= 0.1;
+    return multiplier || 0.01;
+  };
+  
+  const multiplier = getMultiplier();
+  
+  return days.map((day) => ({
+    date: format(day, 'd MMM', { locale: th }),
+    activeUsers: Math.floor((50000 + Math.random() * 30000) * multiplier),
+    active1Day: 18 + Math.random() * 8,
+    active7Day: 28 + Math.random() * 10,
+    active30Day: 55 + Math.random() * 12,
   }));
 };
 
@@ -76,7 +85,6 @@ const filterMetrics = (metrics: MetricCardType[], filters: FilterValues): Metric
 const filterProvinceData = (data: ProvinceData[], filters: FilterValues): ProvinceData[] => {
   let filtered = [...data];
   
-  // Filter by region
   const regionProvinces: Record<string, string[]> = {
     central: ['กรุงเทพมหานคร', 'นนทบุรี', 'ปทุมธานี', 'สมุทรปราการ', 'พระนครศรีอยุธยา', 'นครปฐม', 'สระบุรี', 'ลพบุรี'],
     north: ['เชียงใหม่', 'เชียงราย', 'ลำปาง', 'ลำพูน', 'แม่ฮ่องสอน', 'พิษณุโลก', 'เพชรบูรณ์', 'นครสวรรค์'],
@@ -95,7 +103,6 @@ const filterProvinceData = (data: ProvinceData[], filters: FilterValues): Provin
     filtered = filtered.filter(p => p.name === filters.province);
   }
   
-  // Apply age/occupation multiplier
   let multiplier = 1;
   if (filters.ageRange !== 'all') multiplier *= 0.2;
   if (filters.occupation !== 'all') multiplier *= 0.1;
@@ -107,7 +114,6 @@ const filterProvinceData = (data: ProvinceData[], filters: FilterValues): Provin
     }));
   }
   
-  // Re-rank
   return filtered
     .sort((a, b) => b.value - a.value)
     .map((p, i) => ({ ...p, rank: i + 1 }));
@@ -121,7 +127,6 @@ const filterOccupationData = (data: OccupationData[], filters: FilterValues): Oc
     filtered = filtered.filter(o => o.name.includes(filters.occupation));
   }
   
-  // Apply region/province/age multiplier
   let multiplier = 1;
   if (filters.ageRange !== 'all') multiplier *= 0.2;
   if (filters.region !== 'all') multiplier *= 0.15;
@@ -139,61 +144,6 @@ const filterOccupationData = (data: OccupationData[], filters: FilterValues): Oc
     .map((o, i) => ({ ...o, rank: i + 1 }));
 };
 
-// Filter age distribution data
-const filterAgeDistributionData = (data: AgeDistributionData[], filters: FilterValues): AgeDistributionData[] => {
-  let filtered = [...data];
-  
-  if (filters.ageRange !== 'all') {
-    // Map filter values to data ageRange values
-    const ageMap: Record<string, string> = {
-      '7-15': '7-15',
-      '16-30': '16-30',
-      '31-45': '31-45',
-      '46-60': '45-60',
-      '60+': '60 ขึ้นไป',
-    };
-    const targetAge = ageMap[filters.ageRange];
-    if (targetAge) {
-      filtered = filtered.filter(a => a.ageRange === targetAge);
-    }
-  }
-  
-  // Apply other filters as multiplier
-  let multiplier = 1;
-  if (filters.region !== 'all') multiplier *= 0.15;
-  if (filters.province !== 'all') multiplier *= 0.05;
-  if (filters.occupation !== 'all') multiplier *= 0.1;
-  
-  if (multiplier !== 1) {
-    filtered = filtered.map(a => ({
-      ...a,
-      registeredUsers: Math.floor(a.registeredUsers * multiplier),
-    }));
-  }
-  
-  return filtered;
-};
-
-// Filter occupation distribution data
-const filterOccupationDistributionData = (data: OccupationDistributionData[], filters: FilterValues): OccupationDistributionData[] => {
-  let filtered = [...data];
-  
-  // Apply filters as multiplier
-  let multiplier = 1;
-  if (filters.ageRange !== 'all') multiplier *= 0.2;
-  if (filters.region !== 'all') multiplier *= 0.15;
-  if (filters.province !== 'all') multiplier *= 0.05;
-  
-  if (multiplier !== 1) {
-    filtered = filtered.map(o => ({
-      ...o,
-      registeredUsers: Math.floor(o.registeredUsers * multiplier),
-    }));
-  }
-  
-  return filtered;
-};
-
 // Filter total users
 const filterTotalUsers = (total: number, filters: FilterValues): number => {
   let multiplier = 1;
@@ -204,14 +154,9 @@ const filterTotalUsers = (total: number, filters: FilterValues): number => {
   return Math.floor(total * multiplier);
 };
 
-const tabs = [
-  { id: 'users', label: 'จำนวนผู้ใช้งาน' },
-  { id: 'tokens', label: 'จำนวนผู้ใช้งานตามอาชีพ' },
-];
-
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('users');
+  const [selectedFilter, setSelectedFilter] = useState('province');
   const [filters, setFilters] = useState<FilterValues>({
     dateRange: {
       from: subMonths(new Date(), 1),
@@ -229,18 +174,22 @@ const Dashboard = () => {
 
   // Memoize filtered data
   const dailyEngagementData = useMemo(() => generateDailyData(filters.dateRange, filters), [filters]);
-  const filteredMetrics = useMemo(() => filterMetrics(summaryMetrics, filters), [filters]);
+  const newRegisterData = useMemo(() => generateNewRegisterData(filters.dateRange, filters), [filters]);
   const filteredProvinceData = useMemo(() => filterProvinceData(provinceData, filters), [filters]);
   const filteredOccupationData = useMemo(() => filterOccupationData(occupationData, filters), [filters]);
-  const filteredAgeDistributionData = useMemo(() => filterAgeDistributionData(ageDistributionData, filters), [filters]);
-  const filteredOccupationDistributionData = useMemo(() => filterOccupationDistributionData(occupationDistributionData, filters), [filters]);
   const filteredTotalUsers = useMemo(() => filterTotalUsers(totalUsersOverview, filters), [filters]);
+
+  // Calculate accumulated new register
+  const accumNewRegister = useMemo(() => {
+    return newRegisterData.reduce((acc, day) => acc + day.activeUsers, 0);
+  }, [newRegisterData]);
 
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar />
       
       <main className="ml-64 p-8">
+        {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Button 
             variant="ghost" 
@@ -252,98 +201,37 @@ const Dashboard = () => {
           </Button>
           <h1 className="text-2xl font-bold text-foreground">Usage Trend</h1>
         </div>
-        
-        <FilterBar onFilterChange={handleFilterChange} />
-        
-        <DashboardTabs 
-          tabs={tabs} 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab} 
-        />
 
-        {activeTab === 'users' ? (
-          <UserOverviewTab 
-            dailyEngagementData={dailyEngagementData}
-            metrics={filteredMetrics}
-            provinceData={filteredProvinceData}
-            ageDistributionData={filteredAgeDistributionData}
-            occupationDistributionData={filteredOccupationDistributionData}
-          />
-        ) : (
-          <TokenUsageTab 
-            totalUsers={filteredTotalUsers}
-            occupationData={filteredOccupationData}
-            featureData={usersByFeatureData}
-            modelData={usersByModelData}
-            totalUsers2={totalUsersByUsage}
-          />
-        )}
-      </main>
-    </div>
-  );
-};
-
-interface UserOverviewTabProps {
-  dailyEngagementData: DailyEngagementData[];
-  metrics: MetricCardType[];
-  provinceData: ProvinceData[];
-  ageDistributionData: AgeDistributionData[];
-  occupationDistributionData: OccupationDistributionData[];
-}
-
-const UserOverviewTab = ({ 
-  dailyEngagementData, 
-  metrics, 
-  provinceData: provinces,
-  ageDistributionData: ageData,
-  occupationDistributionData: occData,
-}: UserOverviewTabProps) => {
-  return (
-    <div className="space-y-6">
-      {/* Summary Metrics Section */}
-      <section>
-        <h2 className="text-lg font-semibold text-foreground mb-4">จำนวนผู้ใช้งานภาพรวม</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {metrics.map((metric) => (
-            <MetricCard key={metric.metric_name} metric={metric} size="large" />
-          ))}
+        {/* Top Section: Accum users + Token Limit */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <TotalUsersCard totalUsers={filteredTotalUsers} />
+          <TokenLimitCard models={tokenModels} />
         </div>
-      </section>
+        
+        {/* Filter Bar */}
+        <FilterBar onFilterChange={handleFilterChange} />
 
-      {/* Engagement Chart */}
-      <EngagementChart data={dailyEngagementData} />
+        {/* Middle Section: Map + Filter Bullets + Table */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Left: Thailand Map */}
+          <ProvinceMapSection provinces={filteredProvinceData} />
+          
+          {/* Right: Filter Bullets + Occupation Table */}
+          <div className="space-y-6">
+            <FilterBullets 
+              selectedFilter={selectedFilter}
+              onFilterChange={setSelectedFilter}
+            />
+            <OccupationTable data={filteredOccupationData} />
+          </div>
+        </div>
 
-      {/* Province Map Section */}
-      <ProvinceMapSection provinces={provinces} />
-
-      {/* Demographics Charts */}
-      <DemographicsCharts 
-        ageData={ageData} 
-        occupationData={occData} 
-      />
-    </div>
-  );
-};
-
-interface TokenUsageTabProps {
-  totalUsers: number;
-  occupationData: OccupationData[];
-  featureData: TokenByFeatureData[];
-  modelData: TokenByModelData[];
-  totalUsers2: number;
-}
-
-const TokenUsageTab = ({ totalUsers, occupationData: occData, featureData, modelData, totalUsers2 }: TokenUsageTabProps) => {
-  return (
-    <div className="space-y-6">
-      <TotalUsersCard totalUsers={totalUsers} />
-      <TokenDonutCharts 
-        featureData={featureData}
-        modelData={modelData}
-        totalTokens={totalUsers2}
-        unit="users"
-      />
-      <OccupationTable data={occData} />
+        {/* Bottom Section: Two Charts side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ActiveUsersChart data={dailyEngagementData} />
+          <NewRegisterChart data={newRegisterData} accumTotal={accumNewRegister} />
+        </div>
+      </main>
     </div>
   );
 };
