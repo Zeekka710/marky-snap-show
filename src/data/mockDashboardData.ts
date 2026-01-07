@@ -82,7 +82,7 @@ export const ageDistributionData: AgeDistributionData[] = [
   { ageRange: '16-30', registeredUsers: 15000, activePercentage: 78 },
   { ageRange: '31-45', registeredUsers: 12000, activePercentage: 65 },
   { ageRange: '45-60', registeredUsers: 9000, activePercentage: 52 },
-  { ageRange: '60 ขึ้นไป', registeredUsers: 5000, activePercentage: 35 },
+  { ageRange: '60 ปี ขึ้นไป', registeredUsers: 5000, activePercentage: 35 },
 ];
 
 export const occupationDistributionData: OccupationDistributionData[] = [

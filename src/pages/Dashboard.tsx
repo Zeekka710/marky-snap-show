@@ -206,7 +206,10 @@ const generateTableData = (
   if (categoryType === 'ageRange') {
     // Show all age ranges sorted by user count
     const ageData = ageDistributionData
-      .map((a) => ({ name: `${a.ageRange} ปี`, value: a.registeredUsers }))
+      .map((a) => ({ 
+        name: a.ageRange.includes('ขึ้นไป') ? `${a.ageRange}` : `${a.ageRange} ปี`, 
+        value: a.registeredUsers 
+      }))
       .sort((a, b) => b.value - a.value)
       .map((item, index) => ({
         rank: index + 1,
