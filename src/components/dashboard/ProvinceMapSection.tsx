@@ -53,14 +53,8 @@ const ProvinceMapSection = ({
 
   return (
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <h3 className="text-lg font-semibold text-foreground">ภาพรวมผู้ใช้งานรายจังหวัด</h3>
-        <Button 
-          className="bg-primary hover:bg-primary/90 text-primary-foreground"
-          onClick={onViewAll}
-        >
-          ดูอันดับทั้งหมด
-        </Button>
       </div>
 
       {/* Interactive Map - Full Width */}
