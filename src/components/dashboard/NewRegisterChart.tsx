@@ -1,4 +1,4 @@
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { DailyEngagementData } from '@/types/dashboard';
 
 interface NewRegisterChartProps {
@@ -19,10 +19,7 @@ const NewRegisterChart = ({ data, accumTotal }: NewRegisterChartProps) => {
         )}
       </div>
       
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-3 h-3 rounded-sm bg-[hsl(217,91%,53%)]" />
-        <span className="text-sm text-muted-foreground">จำนวนผู้ใช้งาน</span>
-      </div>
+      <p className="text-sm text-muted-foreground mb-4">จำนวนผู้ใช้งาน Active รายวัน</p>
       
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
@@ -45,8 +42,11 @@ const NewRegisterChart = ({ data, accumTotal }: NewRegisterChartProps) => {
                 borderRadius: '8px',
                 fontSize: '12px',
               }}
-              formatter={(value: number) => [value.toLocaleString('th-TH'), 'จำนวนผู้ใช้งาน']}
+              formatter={(value: number, name: string) => {
+                return [value.toLocaleString('th-TH'), name];
+              }}
             />
+            <Legend wrapperStyle={{ fontSize: '10px' }} />
             
             <Bar 
               dataKey="activeUsers" 
