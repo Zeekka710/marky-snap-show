@@ -315,6 +315,7 @@ const Dashboard = () => {
             onUserTypeChange={setUserType}
             isDialogOpen={isViewAllDialogOpen}
             onDialogOpenChange={setIsViewAllDialogOpen}
+            onViewAll={() => setIsViewAllDialogOpen(true)}
           />
           <OccupationTable 
             data={tableConfig.data}
@@ -324,7 +325,6 @@ const Dashboard = () => {
               <CategoryFilterSection 
                 filters={categoryFilters}
                 onFiltersChange={setCategoryFilters}
-                onViewAll={() => setIsViewAllDialogOpen(true)}
               />
             }
           />
