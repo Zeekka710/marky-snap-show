@@ -64,16 +64,16 @@ const OccupationTable = ({ data = [], title, valueLabel, filterSection }: Occupa
           <thead>
             <tr className="border-b border-border">
               <th className="text-left py-4 px-6 text-sm font-medium text-muted-foreground w-24">
-                <div className="flex items-center gap-1 cursor-pointer hover:text-foreground">
-                  ลำดับ
-                  <ArrowDown className="w-3.5 h-3.5" />
-                </div>
+                ลำดับ
               </th>
               <th className="text-left py-4 px-6 text-sm font-medium text-muted-foreground">
                 {title}
               </th>
               <th className="text-right py-4 px-6 text-sm font-medium text-muted-foreground">
-                {valueLabel}
+                <div className="flex items-center gap-1 justify-end cursor-pointer hover:text-foreground">
+                  {valueLabel}
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </div>
               </th>
             </tr>
           </thead>
