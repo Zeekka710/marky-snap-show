@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Select,
@@ -19,9 +19,10 @@ interface OccupationTableProps {
   data: TableRowData[];
   title: string;
   valueLabel: string;
+  filterSection?: ReactNode;
 }
 
-const OccupationTable = ({ data = [], title, valueLabel }: OccupationTableProps) => {
+const OccupationTable = ({ data = [], title, valueLabel, filterSection }: OccupationTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -52,6 +53,11 @@ const OccupationTable = ({ data = [], title, valueLabel }: OccupationTableProps)
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h3 className="text-lg font-semibold text-foreground">ข้อมูลผู้ใช้งานตามหมวดหมู่</h3>
+          {filterSection && (
+            <div className="flex items-center">
+              {filterSection}
+            </div>
+          )}
         </div>
 
         <table className="w-full">

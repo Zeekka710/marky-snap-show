@@ -12,7 +12,7 @@ import TokenLimitCard from '@/components/dashboard/TokenLimitCard';
 import ProjectDurationCard from '@/components/dashboard/ProjectDurationCard';
 import ProvinceMapSection from '@/components/dashboard/ProvinceMapSection';
 import OccupationTable, { TableRowData } from '@/components/dashboard/OccupationTable';
-import CategoryFilterSection, { CategoryFilters } from '@/components/dashboard/CategoryFilterSection';
+import CategoryFilterSection, { CategoryFilters, CategoryType } from '@/components/dashboard/CategoryFilterSection';
 import ActiveUsersChart from '@/components/dashboard/ActiveUsersChart';
 import NewRegisterChart from '@/components/dashboard/NewRegisterChart';
 import { DailyEngagementData } from '@/types/dashboard';
@@ -137,66 +137,57 @@ const filterMapData = (
   return result;
 };
 
-// Generate table data based on category filters
+// Generate table data based on category type filter
 const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowData[]; title: string; valueLabel: string } => {
-  // Default data
-  const defaultData = {
-    data: occupationData.map((o) => ({
-      rank: o.rank,
-      name: o.name,
-      value: o.userCount,
-    })),
-    title: 'อาชีพ',
-    valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
-  };
-
-  // Determine which data to show based on active filter
-  // Priority: career > ageRange > province (default to occupation if all selected)
+  const categoryType = categoryFilters.categoryType;
   
-  if (categoryFilters.career !== 'all') {
-    // Show specific career data
-    const filteredData = occupationData
-      .filter((o) => o.name === categoryFilters.career)
-      .map((o) => ({
-        rank: 1,
-        name: o.name,
-        value: o.userCount,
+  if (categoryType === 'province') {
+    // Show all provinces sorted by user count
+    const provinceEntries = Object.entries(provinceDataMap || {})
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .map((item, index) => ({
+        rank: index + 1,
+        name: item.name,
+        value: item.value,
       }));
     return {
-      data: filteredData.length > 0 ? filteredData : [{ rank: 1, name: categoryFilters.career, value: 0 }],
-      title: 'อาชีพ',
-      valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
-    };
-  }
-  
-  if (categoryFilters.ageRange !== 'all') {
-    // Show age range data
-    const filteredData = ageDistributionData
-      .filter((a) => a.ageRange === categoryFilters.ageRange)
-      .map((a, i) => ({
-        rank: i + 1,
-        name: `${a.ageRange} ปี`,
-        value: a.registeredUsers,
-      }));
-    return {
-      data: filteredData.length > 0 ? filteredData : [{ rank: 1, name: `${categoryFilters.ageRange} ปี`, value: 0 }],
-      title: 'ช่วงอายุ',
-      valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
-    };
-  }
-  
-  if (categoryFilters.province !== 'all') {
-    // Show province data
-    const value = provinceDataMap?.[categoryFilters.province] || 0;
-    return {
-      data: [{ rank: 1, name: categoryFilters.province, value }],
+      data: provinceEntries,
       title: 'จังหวัด',
       valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
     };
   }
   
-  // Default: show occupation data
-  return defaultData;
+  if (categoryType === 'ageRange') {
+    // Show all age ranges sorted by user count
+    const ageData = ageDistributionData
+      .map((a) => ({ name: `${a.ageRange} ปี`, value: a.registeredUsers }))
+      .sort((a, b) => b.value - a.value)
+      .map((item, index) => ({
+        rank: index + 1,
+        name: item.name,
+        value: item.value,
+      }));
+    return {
+      data: ageData,
+      title: 'ช่วงอายุ',
+      valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+    };
+  }
+  
+  // Default: occupation - show all occupations sorted by user count
+  const occupationSorted = [...occupationData]
+    .sort((a, b) => b.userCount - a.userCount)
+    .map((o, index) => ({
+      rank: index + 1,
+      name: o.name,
+      value: o.userCount,
+    }));
+  return {
+    data: occupationSorted,
+    title: 'อาชีพ',
+    valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+  };
 };
 
 const Dashboard = () => {
@@ -207,6 +198,7 @@ const Dashboard = () => {
     province: 'all',
     ageRange: 'all',
     career: 'all',
+    categoryType: 'occupation',
   });
   
   // User type filter for map
@@ -280,16 +272,7 @@ const Dashboard = () => {
           <TokenLimitCard models={tokenModels} />
         </div>
 
-        {/* Row 4: Category Filters */}
-        <div className="mb-6">
-          <CategoryFilterSection 
-            filters={categoryFilters}
-            onFiltersChange={setCategoryFilters}
-            onViewAll={() => setIsViewAllDialogOpen(true)}
-          />
-        </div>
-
-        {/* Row 5: Map + Table */}
+        {/* Row 4: Map + Table */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <ProvinceMapSection 
             provinceData={filteredMapData}
@@ -302,6 +285,13 @@ const Dashboard = () => {
             data={tableConfig.data}
             title={tableConfig.title}
             valueLabel={tableConfig.valueLabel}
+            filterSection={
+              <CategoryFilterSection 
+                filters={categoryFilters}
+                onFiltersChange={setCategoryFilters}
+                onViewAll={() => setIsViewAllDialogOpen(true)}
+              />
+            }
           />
         </div>
 
