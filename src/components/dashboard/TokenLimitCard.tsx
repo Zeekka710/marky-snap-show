@@ -10,11 +10,11 @@ interface TokenLimitCardProps {
 
 const TokenLimitCard = ({ models }: TokenLimitCardProps) => {
   const formatNumber = (num: number): string => {
-    return num.toLocaleString("th-TH") + " Token";
+    return num.toLocaleString("th-TH") + " โทเค็น";
   };
 
   const formatRemaining = (num: number): string => {
-    return num.toLocaleString("th-TH") + " left";
+    return num.toLocaleString("th-TH") + " คงเหลือ";
   };
 
   return (
