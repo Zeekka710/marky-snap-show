@@ -12,7 +12,7 @@ const NewRegisterChart = ({ data, accumTotal }: NewRegisterChartProps) => {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-foreground">New register</h3>
         {accumTotal !== undefined && (
-          <div className="text-right">
+          <div className="text-center">
             <p className="text-xs text-muted-foreground">ผู้ใช้ใหม่สะสม</p>
             <p className="text-lg font-bold text-foreground">{accumTotal.toLocaleString('th-TH')}</p>
           </div>
