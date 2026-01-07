@@ -294,7 +294,7 @@ const ThailandMap = ({ onProvinceClick, provinceData }: ThailandMapProps) => {
   }, [dataMap, getProvinceColor]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[400px]">
+    <div ref={containerRef} className="relative w-full h-full min-h-[400px]">
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-card/50">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -340,8 +340,9 @@ const ThailandMap = ({ onProvinceClick, provinceData }: ThailandMapProps) => {
       <svg 
         ref={svgRef} 
         width="100%" 
-        height="400"
-        className="w-full cursor-grab active:cursor-grabbing"
+        height="100%"
+        className="w-full h-full cursor-grab active:cursor-grabbing"
+        style={{ minHeight: '400px' }}
       />
 
       {/* Hover tooltip */}
