@@ -21,6 +21,7 @@ import {
   occupationData,
   ageDistributionData,
   totalUsersOverview,
+  regionData,
 } from '@/data/mockDashboardData';
 import { provinceDataMap } from '@/data/thailandGeoData';
 
@@ -140,6 +141,22 @@ const filterMapData = (
 // Generate table data based on category type filter
 const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowData[]; title: string; valueLabel: string } => {
   const categoryType = categoryFilters.categoryType;
+  
+  if (categoryType === 'region') {
+    // Show all regions sorted by user count
+    const regionEntries = [...regionData]
+      .sort((a, b) => b.userCount - a.userCount)
+      .map((item, index) => ({
+        rank: index + 1,
+        name: item.name,
+        value: item.userCount,
+      }));
+    return {
+      data: regionEntries,
+      title: 'ภูมิภาค',
+      valueLabel: 'จำนวนผู้ใช้งาน (บัญชี)',
+    };
+  }
   
   if (categoryType === 'province') {
     // Show all provinces sorted by user count
