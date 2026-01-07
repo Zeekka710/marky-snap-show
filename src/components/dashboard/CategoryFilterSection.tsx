@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-export type CategoryType = 'province' | 'ageRange' | 'occupation';
+export type CategoryType = 'province' | 'ageRange' | 'occupation' | 'region';
 
 export interface CategoryFilters {
   province: string;
@@ -23,6 +23,7 @@ interface CategoryFilterSectionProps {
 }
 
 const categoryOptions = [
+  { value: 'region', label: 'ภูมิภาค' },
   { value: 'province', label: 'จังหวัด' },
   { value: 'ageRange', label: 'ช่วงอายุ' },
   { value: 'occupation', label: 'อาชีพ' },
