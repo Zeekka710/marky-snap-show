@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -19,7 +18,6 @@ export interface CategoryFilters {
 interface CategoryFilterSectionProps {
   filters: CategoryFilters;
   onFiltersChange: (filters: CategoryFilters) => void;
-  onViewAll: () => void;
 }
 
 const categoryOptions = [
@@ -29,7 +27,7 @@ const categoryOptions = [
   { value: 'occupation', label: 'อาชีพ' },
 ];
 
-const CategoryFilterSection = ({ filters, onFiltersChange, onViewAll }: CategoryFilterSectionProps) => {
+const CategoryFilterSection = ({ filters, onFiltersChange }: CategoryFilterSectionProps) => {
   const handleCategoryChange = (value: string) => {
     onFiltersChange({
       province: 'all',
@@ -40,29 +38,20 @@ const CategoryFilterSection = ({ filters, onFiltersChange, onViewAll }: Category
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground whitespace-nowrap">หมวดหมู่:</span>
-        <Select value={filters.categoryType} onValueChange={handleCategoryChange}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="เลือกหมวดหมู่" />
-          </SelectTrigger>
-          <SelectContent className="bg-popover z-50">
-            {categoryOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Button 
-        className="bg-primary hover:bg-primary/90 text-primary-foreground"
-        onClick={onViewAll}
-      >
-        ดูอันดับทั้งหมด
-      </Button>
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-muted-foreground whitespace-nowrap">หมวดหมู่:</span>
+      <Select value={filters.categoryType} onValueChange={handleCategoryChange}>
+        <SelectTrigger className="w-[150px]">
+          <SelectValue placeholder="เลือกหมวดหมู่" />
+        </SelectTrigger>
+        <SelectContent className="bg-popover z-50">
+          {categoryOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };

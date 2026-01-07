@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import ThailandMap from "./ThailandMap";
 import { Search } from "lucide-react";
 
@@ -12,6 +13,7 @@ interface ProvinceMapSectionProps {
   onUserTypeChange: (value: string) => void;
   isDialogOpen: boolean;
   onDialogOpenChange: (open: boolean) => void;
+  onViewAll: () => void;
 }
 
 const ProvinceMapSection = ({
@@ -20,6 +22,7 @@ const ProvinceMapSection = ({
   onUserTypeChange,
   isDialogOpen,
   onDialogOpenChange,
+  onViewAll,
 }: ProvinceMapSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -52,6 +55,12 @@ const ProvinceMapSection = ({
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-foreground">ภาพรวมผู้ใช้งานรายจังหวัด</h3>
+        <Button 
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          onClick={onViewAll}
+        >
+          ดูอันดับทั้งหมด
+        </Button>
       </div>
 
       {/* Interactive Map - Full Width */}
