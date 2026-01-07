@@ -1,21 +1,10 @@
-import { useState } from 'react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Input } from '@/components/ui/input';
-import ThailandMap from './ThailandMap';
-import { Search } from 'lucide-react';
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import ThailandMap from "./ThailandMap";
+import { Search } from "lucide-react";
 
 interface ProvinceMapSectionProps {
   provinceData: Record<string, number>;
@@ -25,19 +14,19 @@ interface ProvinceMapSectionProps {
   onDialogOpenChange: (open: boolean) => void;
 }
 
-const ProvinceMapSection = ({ 
-  provinceData: filteredProvinceDataMap, 
-  userType, 
+const ProvinceMapSection = ({
+  provinceData: filteredProvinceDataMap,
+  userType,
   onUserTypeChange,
   isDialogOpen,
   onDialogOpenChange,
 }: ProvinceMapSectionProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Ensure we have valid data before processing
   const safeProvinceData = filteredProvinceDataMap || {};
   const provinceValues = Object.values(safeProvinceData);
-  
+
   const maxValue = provinceValues.length > 0 ? Math.max(...provinceValues) : 0;
   const minValue = provinceValues.length > 0 ? Math.min(...provinceValues) : 0;
 
@@ -53,7 +42,7 @@ const ProvinceMapSection = ({
 
   // Filter provinces based on search
   const filteredProvinces = allProvinces.filter((province) =>
-    province.name.toLowerCase().includes(searchQuery.toLowerCase())
+    province.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Calculate total users based on filtered data
@@ -63,35 +52,23 @@ const ProvinceMapSection = ({
     <div className="bg-card rounded-xl p-6 border border-border shadow-sm animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-foreground">ภาพรวมผู้ใช้งานรายจังหวัด</h3>
-        <div className="flex items-center gap-3">
-          <Select value={userType} onValueChange={onUserTypeChange}>
-            <SelectTrigger className="w-[220px]">
-              <span className="text-muted-foreground">ภาพรวมผู้ใช้งาน:</span>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-popover z-50">
-              <SelectItem value="registered">จำนวนผู้ลงทะเบียน</SelectItem>
-              <SelectItem value="active">จำนวนผู้ใช้งาน Active</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
       {/* Interactive Map - Full Width */}
       <div className="relative">
         <ThailandMap provinceData={safeProvinceData} />
-        
+
         {/* Legend */}
         <div className="absolute bottom-4 left-4 flex items-center gap-2">
           <div className="flex flex-col items-center">
-            <span className="text-xs text-muted-foreground mb-1">{maxValue.toLocaleString('th-TH')}</span>
-            <div 
-              className="w-3 h-24 rounded" 
-              style={{ 
-                background: 'linear-gradient(to bottom, hsl(217, 91%, 23%), hsl(217, 91%, 83%))' 
-              }} 
+            <span className="text-xs text-muted-foreground mb-1">{maxValue.toLocaleString("th-TH")}</span>
+            <div
+              className="w-3 h-24 rounded"
+              style={{
+                background: "linear-gradient(to bottom, hsl(217, 91%, 23%), hsl(217, 91%, 83%))",
+              }}
             />
-            <span className="text-xs text-muted-foreground mt-1">{minValue.toLocaleString('th-TH')}</span>
+            <span className="text-xs text-muted-foreground mt-1">{minValue.toLocaleString("th-TH")}</span>
           </div>
         </div>
       </div>
@@ -102,7 +79,7 @@ const ProvinceMapSection = ({
           <DialogHeader>
             <DialogTitle className="text-xl">อันดับจังหวัดทั้งหมด</DialogTitle>
           </DialogHeader>
-          
+
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-4 py-4 border-b border-border">
             <div className="text-center">
@@ -110,12 +87,12 @@ const ProvinceMapSection = ({
               <p className="text-sm text-muted-foreground">จังหวัด</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-primary">{totalUsers.toLocaleString('th-TH')}</p>
+              <p className="text-2xl font-bold text-primary">{totalUsers.toLocaleString("th-TH")}</p>
               <p className="text-sm text-muted-foreground">ผู้ใช้งานทั้งหมด</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">
-                {Math.round(totalUsers / allProvinces.length).toLocaleString('th-TH')}
+                {Math.round(totalUsers / allProvinces.length).toLocaleString("th-TH")}
               </p>
               <p className="text-sm text-muted-foreground">เฉลี่ยต่อจังหวัด</p>
             </div>
@@ -136,18 +113,18 @@ const ProvinceMapSection = ({
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-1">
               {filteredProvinces.map((province) => (
-                <div 
-                  key={province.name} 
+                <div
+                  key={province.name}
                   className="flex items-center justify-between py-3 px-3 rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span 
+                    <span
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                        province.rank <= 3 
-                          ? 'bg-primary text-primary-foreground' 
-                          : province.rank <= 10 
-                            ? 'bg-primary/20 text-primary' 
-                            : 'bg-muted text-muted-foreground'
+                        province.rank <= 3
+                          ? "bg-primary text-primary-foreground"
+                          : province.rank <= 10
+                            ? "bg-primary/20 text-primary"
+                            : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {province.rank}
@@ -156,7 +133,7 @@ const ProvinceMapSection = ({
                   </div>
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-semibold text-foreground tabular-nums">
-                      {province.value.toLocaleString('th-TH')}
+                      {province.value.toLocaleString("th-TH")}
                     </span>
                     <span className="text-xs text-muted-foreground w-16 text-right">
                       {((province.value / totalUsers) * 100).toFixed(2)}%
@@ -164,11 +141,9 @@ const ProvinceMapSection = ({
                   </div>
                 </div>
               ))}
-              
+
               {filteredProvinces.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  ไม่พบจังหวัดที่ค้นหา
-                </div>
+                <div className="text-center py-8 text-muted-foreground">ไม่พบจังหวัดที่ค้นหา</div>
               )}
             </div>
           </ScrollArea>
