@@ -37,6 +37,11 @@ const tokenModels = [
   { name: 'Gemini 3 Pro', used: 300000, total: 500000 },
   { name: 'Gemini 3 Flash', used: 200000, total: 600000 },
   { name: 'Claude Sonnet 4.5', used: 150000, total: 400000 },
+  { name: 'Claude Opus 4', used: 280000, total: 500000 },
+  { name: 'Llama 4', used: 120000, total: 300000 },
+  { name: 'Mistral Large', used: 180000, total: 350000 },
+  { name: 'Cohere Command', used: 90000, total: 200000 },
+  { name: 'Perplexity Sonar', used: 75000, total: 250000 },
 ];
 
 // Generate mock daily data based on date range and filters
