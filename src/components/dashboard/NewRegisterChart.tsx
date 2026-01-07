@@ -1,4 +1,4 @@
-import { Bar, Line, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DailyEngagementData } from '@/types/dashboard';
 
 interface NewRegisterChartProps {
@@ -23,7 +23,7 @@ const NewRegisterChart = ({ data, accumTotal }: NewRegisterChartProps) => {
       
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+          <BarChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
               dataKey="date" 
@@ -31,18 +31,9 @@ const NewRegisterChart = ({ data, accumTotal }: NewRegisterChartProps) => {
               axisLine={{ stroke: 'hsl(var(--border))' }}
             />
             <YAxis 
-              yAxisId="left"
               tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
               axisLine={{ stroke: 'hsl(var(--border))' }}
               tickFormatter={(value) => value.toLocaleString('th-TH')}
-            />
-            <YAxis 
-              yAxisId="right"
-              orientation="right"
-              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
-              axisLine={{ stroke: 'hsl(var(--border))' }}
-              tickFormatter={(value) => `${value}%`}
-              domain={[0, 100]}
             />
             <Tooltip 
               contentStyle={{
@@ -51,52 +42,17 @@ const NewRegisterChart = ({ data, accumTotal }: NewRegisterChartProps) => {
                 borderRadius: '8px',
                 fontSize: '12px',
               }}
-              formatter={(value: number, name: string) => {
-                if (name === 'จำนวนผู้ใช้งาน') {
-                  return [value.toLocaleString('th-TH'), name];
-                }
-                return [`${value.toFixed(1)}%`, name];
-              }}
+              formatter={(value: number) => [value.toLocaleString('th-TH'), 'จำนวนผู้ใช้งาน']}
             />
-            <Legend wrapperStyle={{ fontSize: '10px' }} />
             
             <Bar 
-              yAxisId="left"
               dataKey="activeUsers" 
               name="จำนวนผู้ใช้งาน" 
               fill="hsl(217, 91%, 53%)" 
               radius={[2, 2, 0, 0]}
               opacity={0.8}
             />
-            
-            <Line 
-              yAxisId="right"
-              type="monotone" 
-              dataKey="active1Day" 
-              name="% Active 1 วัน" 
-              stroke="hsl(25, 95%, 53%)" 
-              strokeWidth={2}
-              dot={{ fill: 'hsl(25, 95%, 53%)', strokeWidth: 1, r: 2 }}
-            />
-            <Line 
-              yAxisId="right"
-              type="monotone" 
-              dataKey="active7Day" 
-              name="% Active 7 วัน" 
-              stroke="hsl(142, 76%, 36%)" 
-              strokeWidth={2}
-              dot={{ fill: 'hsl(142, 76%, 36%)', strokeWidth: 1, r: 2 }}
-            />
-            <Line 
-              yAxisId="right"
-              type="monotone" 
-              dataKey="active30Day" 
-              name="% Active 30 วัน" 
-              stroke="hsl(262, 83%, 58%)" 
-              strokeWidth={2}
-              dot={{ fill: 'hsl(262, 83%, 58%)', strokeWidth: 1, r: 2 }}
-            />
-          </ComposedChart>
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>
