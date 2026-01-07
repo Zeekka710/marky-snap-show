@@ -19,7 +19,10 @@ const NewRegisterChart = ({ data, accumTotal }: NewRegisterChartProps) => {
         )}
       </div>
       
-      <p className="text-sm text-muted-foreground mb-4">จำนวนผู้ใช้งาน Active รายวัน</p>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-3 h-3 rounded-sm bg-[hsl(217,91%,53%)]" />
+        <span className="text-sm text-muted-foreground">จำนวนผู้ใช้งาน</span>
+      </div>
       
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
