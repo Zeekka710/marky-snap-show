@@ -143,18 +143,31 @@ const filterMapData = (
   return result;
 };
 
-// Generate table data based on category type filter
-const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowData[]; title: string; valueLabel: string } => {
+// Generate table data based on category type filter and map data
+const generateTableData = (
+  categoryFilters: CategoryFilters,
+  filteredMapData: Record<string, number>
+): { data: TableRowData[]; title: string; valueLabel: string } => {
   const categoryType = categoryFilters.categoryType;
   
   if (categoryType === 'region') {
-    // Show all regions sorted by user count
-    const regionEntries = [...regionData]
-      .sort((a, b) => b.userCount - a.userCount)
+    // Calculate region totals from filtered map data
+    const regionTotals: Record<string, number> = {};
+    regionData.forEach((region) => {
+      let total = 0;
+      region.provinces.forEach((provinceName) => {
+        total += filteredMapData[provinceName] || 0;
+      });
+      regionTotals[region.name] = total;
+    });
+    
+    const regionEntries = Object.entries(regionTotals)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
       .map((item, index) => ({
         rank: index + 1,
         name: item.name,
-        value: item.userCount,
+        value: item.value,
       }));
     return {
       data: regionEntries,
@@ -164,8 +177,8 @@ const generateTableData = (categoryFilters: CategoryFilters): { data: TableRowDa
   }
   
   if (categoryType === 'province') {
-    // Show all provinces sorted by user count
-    const provinceEntries = Object.entries(provinceDataMap || {})
+    // Use filtered map data directly
+    const provinceEntries = Object.entries(filteredMapData)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value)
       .map((item, index) => ({
@@ -253,7 +266,7 @@ const Dashboard = () => {
   const filteredMapData = useMemo(() => filterMapData(categoryFilters, userType), [categoryFilters, userType]);
   
   // Memoize table data (affected by categoryFilters)
-  const tableConfig = useMemo(() => generateTableData(categoryFilters), [categoryFilters]);
+  const tableConfig = useMemo(() => generateTableData(categoryFilters, filteredMapData), [categoryFilters, filteredMapData]);
 
   // Calculate accumulated new register
   const accumNewRegister = useMemo(() => {
