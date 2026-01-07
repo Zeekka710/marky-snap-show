@@ -5,6 +5,13 @@ import { th } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import FilterBar, { FilterValues } from '@/components/dashboard/FilterBar';
 import TotalUsersCard from '@/components/dashboard/TotalUsersCard';
@@ -26,9 +33,12 @@ import {
 import { provinceDataMap } from '@/data/thailandGeoData';
 
 // Mock project data
-const projectName = 'โครงการ AI สำหรับประชาชน';
-const projectStartDate = new Date('2024-11-26');
-const projectEndDate = addMonths(projectStartDate, 1);
+const projects = [
+  { id: '1', name: 'โครงการ AI สำหรับประชาชน', startDate: new Date('2024-11-26') },
+  { id: '2', name: 'โครงการพัฒนาทักษะดิจิทัล', startDate: new Date('2024-10-15') },
+  { id: '3', name: 'โครงการส่งเสริมการเรียนรู้ออนไลน์', startDate: new Date('2024-09-01') },
+  { id: '4', name: 'โครงการ Smart City Thailand', startDate: new Date('2024-08-20') },
+];
 
 // Mock token models data with more models for horizontal scroll
 const tokenModels = [
@@ -228,6 +238,14 @@ const generateTableData = (
 const Dashboard = () => {
   const navigate = useNavigate();
   
+  // Selected project state
+  const [selectedProjectId, setSelectedProjectId] = useState(projects[0].id);
+  
+  // Get selected project data
+  const selectedProject = projects.find(p => p.id === selectedProjectId) || projects[0];
+  const projectStartDate = selectedProject.startDate;
+  const projectEndDate = addMonths(projectStartDate, 1);
+  
   // Category filters for map and table (Province, Age range, Career)
   const [categoryFilters, setCategoryFilters] = useState<CategoryFilters>({
     province: 'all',
@@ -291,9 +309,20 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-foreground">Usage Trend</h1>
         </div>
 
-        {/* Row 1: Project Title */}
+        {/* Row 1: Project Selector */}
         <div className="mb-4">
-          <h2 className="text-xl font-semibold text-foreground">{projectName}</h2>
+          <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+            <SelectTrigger className="w-fit min-w-[300px] text-xl font-semibold bg-card border-border">
+              <SelectValue placeholder="เลือกโครงการ" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border">
+              {projects.map((project) => (
+                <SelectItem key={project.id} value={project.id} className="text-base">
+                  {project.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Row 2: Accum Users + Project Duration */}
