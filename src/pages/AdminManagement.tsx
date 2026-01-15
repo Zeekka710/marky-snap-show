@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet, Eye, MoreVertical, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet, Eye, MoreVertical, AlertCircle, CheckCircle2, Shield } from 'lucide-react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,10 +53,20 @@ interface Admin {
 interface User {
   id: string;
   name: string;
+  email: string;
   project: string;
   idNumber: string | null;
+  birthDate: string;
+  gender: string;
+  occupation: string;
+  idCardAddress: string;
+  currentAddress: string;
+  userLevel: string;
   userStatus: 'active' | 'inactive';
   projectStatus: 'active' | 'inactive';
+  pdpaVersion: string;
+  tcVersion: string;
+  projectUserLevel: string;
   updatedAt: string;
 }
 
@@ -68,14 +78,14 @@ const initialCentralAdmins: Admin[] = [
 ];
 
 const initialUsers: User[] = [
-  { id: '1', name: 'Burahan Byh', project: 'AI Passport', idNumber: '**********571', userStatus: 'active', projectStatus: 'active', updatedAt: '9 ม.ค. 2569' },
-  { id: '2', name: 'Chotiwit Souyan', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '8 ม.ค. 2569' },
-  { id: '3', name: 'Nuddanai Klaiklin', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '31 ธ.ค. 2568' },
-  { id: '4', name: 'xBKLYN', project: 'AI Passport', idNumber: '**********365', userStatus: 'active', projectStatus: 'active', updatedAt: '8 ม.ค. 2569' },
-  { id: '5', name: 'Pongsakorn Rattanapan', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '7 ม.ค. 2569' },
-  { id: '6', name: 'Soraya Chuenwitthaya', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '8 ม.ค. 2569' },
-  { id: '7', name: 'supanon test', project: 'AI Passport', idNumber: '**********226', userStatus: 'active', projectStatus: 'active', updatedAt: '7 ม.ค. 2569' },
-  { id: '8', name: 'Bat Thanaphong', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '9 ม.ค. 2569' },
+  { id: '1', name: 'Burahan Byh', email: 'burahan.byh@gmail.com', project: 'AI Passport', idNumber: '**********571', birthDate: '15 มี.ค. 2540', gender: 'ชาย', occupation: 'วิศวกร', idCardAddress: '123/45 ถ.สุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพฯ 10110', currentAddress: '789/12 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '9 ม.ค. 2569' },
+  { id: '2', name: 'Chotiwit Souyan', email: 'chotiwit.s@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '22 ก.ค. 2538', gender: 'ชาย', occupation: 'นักพัฒนาซอฟต์แวร์', idCardAddress: '456/78 ถ.พหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ 10900', currentAddress: '456/78 ถ.พหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ 10900', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '8 ม.ค. 2569' },
+  { id: '3', name: 'Nuddanai Klaiklin', email: 'nuddanai.k@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '10 ธ.ค. 2535', gender: 'ชาย', occupation: 'ครู', idCardAddress: '789/01 ถ.ลาดพร้าว แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230', currentAddress: '789/01 ถ.ลาดพร้าว แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Explorer', updatedAt: '31 ธ.ค. 2568' },
+  { id: '4', name: 'xBKLYN', email: 'xbklyn@gmail.com', project: 'AI Passport', idNumber: '**********365', birthDate: '5 ม.ค. 2542', gender: 'ชาย', occupation: 'นักศึกษา', idCardAddress: '321/54 ถ.เพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400', currentAddress: '321/54 ถ.เพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '8 ม.ค. 2569' },
+  { id: '5', name: 'Pongsakorn Rattanapan', email: 'pongsakorn.r@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '18 เม.ย. 2537', gender: 'ชาย', occupation: 'แพทย์', idCardAddress: '654/32 ถ.สีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500', currentAddress: '654/32 ถ.สีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '7 ม.ค. 2569' },
+  { id: '6', name: 'Soraya Chuenwitthaya', email: 'soraya.c@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '25 ก.พ. 2536', gender: 'หญิง', occupation: 'พยาบาล', idCardAddress: '147/25 ถ.วิภาวดีรังสิต แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900', currentAddress: '258/36 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '8 ม.ค. 2569' },
+  { id: '7', name: 'supanon test', email: 'supanon.t@gmail.com', project: 'AI Passport', idNumber: '**********226', birthDate: '30 ส.ค. 2539', gender: 'ชาย', occupation: 'นักบัญชี', idCardAddress: '987/65 ถ.อโศก แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพฯ 10110', currentAddress: '987/65 ถ.อโศก แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพฯ 10110', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Explorer', updatedAt: '7 ม.ค. 2569' },
+  { id: '8', name: 'Bat Thanaphong', email: 'bat.t@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '12 พ.ย. 2541', gender: 'ชาย', occupation: 'นักออกแบบ', idCardAddress: '246/80 ถ.พระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', currentAddress: '246/80 ถ.พระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '9 ม.ค. 2569' },
 ];
 
 const AdminManagement = () => {
@@ -91,7 +101,9 @@ const AdminManagement = () => {
   const [projectAdmins, setProjectAdmins] = useState<Admin[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState('10');
   const [csvErrors, setCsvErrors] = useState<string[]>([]);
-  const [users] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isUserDetailOpen, setIsUserDetailOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -420,7 +432,15 @@ const AdminManagement = () => {
                 </TableCell>
                 <TableCell>{user.updatedAt}</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsUserDetailOpen(true);
+                    }}
+                  >
                     <Eye className="w-4 h-4" />
                   </Button>
                 </TableCell>
@@ -742,6 +762,174 @@ const AdminManagement = () => {
                 </Button>
               </div>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* User Detail Modal */}
+        <Dialog open={isUserDetailOpen} onOpenChange={setIsUserDetailOpen}>
+          <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>ข้อมูลผู้ใช้งานโครงการ</DialogTitle>
+            </DialogHeader>
+            {selectedUser && (
+              <div className="space-y-4 py-4">
+                {/* User Info Section */}
+                <div className="space-y-3">
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">อีเมล</span>
+                    <span className="text-foreground text-right">{selectedUser.email}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">ชื่อ นามสกุล</span>
+                    <span className="text-foreground text-right">{selectedUser.name}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">เลขบัตรประชาชน</span>
+                    <span className="text-foreground text-right">{selectedUser.idNumber || '-'}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">วันเดือนปีเกิด</span>
+                    <span className="text-foreground text-right">{selectedUser.birthDate}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">เพศ</span>
+                    <span className="text-foreground text-right">{selectedUser.gender}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">อาชีพ</span>
+                    <span className="text-foreground text-right">{selectedUser.occupation}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50 gap-4">
+                    <span className="text-muted-foreground whitespace-nowrap">ที่อยู่ตามบัตรประชาชน</span>
+                    <span className="text-foreground text-right">{selectedUser.idCardAddress}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50 gap-4">
+                    <span className="text-muted-foreground whitespace-nowrap">ที่อยู่ปัจจุบัน</span>
+                    <span className="text-foreground text-right">{selectedUser.currentAddress}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">ระดับผู้ใช้งาน</span>
+                    <span className="text-foreground text-right">{selectedUser.userLevel}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">สถานะผู้ใช้งาน</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#22c55e]">
+                        {selectedUser.userStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                      </span>
+                      <div 
+                        className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${
+                          selectedUser.userStatus === 'active' ? 'bg-[#22c55e]' : 'bg-muted'
+                        }`}
+                        onClick={() => {
+                          setSelectedUser({
+                            ...selectedUser,
+                            userStatus: selectedUser.userStatus === 'active' ? 'inactive' : 'active'
+                          });
+                        }}
+                      >
+                        <div 
+                          className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                            selectedUser.userStatus === 'active' ? 'translate-x-6' : 'translate-x-0'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Section */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">โครงการ</span>
+                    <span className="text-foreground text-right">{selectedUser.project}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">เวอร์ชัน PDPA</span>
+                    <span className="text-foreground text-right">{selectedUser.pdpaVersion}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">เวอร์ชัน T&C</span>
+                    <span className="text-foreground text-right">{selectedUser.tcVersion}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">สถานะโครงการ</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#22c55e]">
+                        {selectedUser.projectStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                      </span>
+                      <div 
+                        className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${
+                          selectedUser.projectStatus === 'active' ? 'bg-[#22c55e]' : 'bg-muted'
+                        }`}
+                        onClick={() => {
+                          setSelectedUser({
+                            ...selectedUser,
+                            projectStatus: selectedUser.projectStatus === 'active' ? 'inactive' : 'active'
+                          });
+                        }}
+                      >
+                        <div 
+                          className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                            selectedUser.projectStatus === 'active' ? 'translate-x-6' : 'translate-x-0'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">ระดับผู้ใช้งาน</span>
+                    <Select 
+                      value={selectedUser.projectUserLevel} 
+                      onValueChange={(value) => {
+                        setSelectedUser({
+                          ...selectedUser,
+                          projectUserLevel: value
+                        });
+                      }}
+                    >
+                      <SelectTrigger className="w-40 h-9">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-muted-foreground" />
+                          <SelectValue />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Pioneer">Pioneer</SelectItem>
+                        <SelectItem value="Explorer">Explorer</SelectItem>
+                        <SelectItem value="Member">Member</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground">วันที่อัปเดต</span>
+                    <span className="text-foreground text-right">{selectedUser.updatedAt}</span>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="flex justify-center gap-3 pt-4">
+                  <Button variant="outline" onClick={() => setIsUserDetailOpen(false)}>
+                    ยกเลิก
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      // Update the user in the list
+                      setUsers(prev => prev.map(u => 
+                        u.id === selectedUser.id ? selectedUser : u
+                      ));
+                      setIsUserDetailOpen(false);
+                      toast({
+                        title: 'บันทึกสำเร็จ',
+                        description: 'อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว',
+                      });
+                    }}
+                  >
+                    ยืนยัน
+                  </Button>
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </main>
