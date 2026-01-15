@@ -50,11 +50,32 @@ interface Admin {
   version: string | null;
 }
 
+interface User {
+  id: string;
+  name: string;
+  project: string;
+  idNumber: string | null;
+  userStatus: 'active' | 'inactive';
+  projectStatus: 'active' | 'inactive';
+  updatedAt: string;
+}
+
 const initialCentralAdmins: Admin[] = [
   { id: '1', email: 'admin.central@gmail.com', name: 'ศุภชัย ธนากร', project: 'ทั้งหมด', status: 'active', tcVersion: '1.0', version: '2.0' },
   { id: '2', email: 'super.admin@gmail.com', name: 'สมศรี ใจดี', project: 'ทั้งหมด', status: 'active', tcVersion: '1.0', version: '2.0' },
   { id: '3', email: 'master.admin@gmail.com', name: 'ธนพล วิชัยดิษฐ์', project: 'ทั้งหมด', status: 'suspended', tcVersion: '1.0', version: '2.0' },
   { id: '4', email: 'locked.admin@gmail.com', name: 'วรินทร์ สุขใจ', project: 'ทั้งหมด', status: 'locked', tcVersion: '1.0', version: '2.0' },
+];
+
+const initialUsers: User[] = [
+  { id: '1', name: 'Burahan Byh', project: 'AI Passport', idNumber: '**********571', userStatus: 'active', projectStatus: 'active', updatedAt: '9 ม.ค. 2569' },
+  { id: '2', name: 'Chotiwit Souyan', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '8 ม.ค. 2569' },
+  { id: '3', name: 'Nuddanai Klaiklin', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '31 ธ.ค. 2568' },
+  { id: '4', name: 'xBKLYN', project: 'AI Passport', idNumber: '**********365', userStatus: 'active', projectStatus: 'active', updatedAt: '8 ม.ค. 2569' },
+  { id: '5', name: 'Pongsakorn Rattanapan', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '7 ม.ค. 2569' },
+  { id: '6', name: 'Soraya Chuenwitthaya', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '8 ม.ค. 2569' },
+  { id: '7', name: 'supanon test', project: 'AI Passport', idNumber: '**********226', userStatus: 'active', projectStatus: 'active', updatedAt: '7 ม.ค. 2569' },
+  { id: '8', name: 'Bat Thanaphong', project: 'AI Passport', idNumber: null, userStatus: 'active', projectStatus: 'active', updatedAt: '9 ม.ค. 2569' },
 ];
 
 const AdminManagement = () => {
@@ -70,6 +91,7 @@ const AdminManagement = () => {
   const [projectAdmins, setProjectAdmins] = useState<Admin[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState('10');
   const [csvErrors, setCsvErrors] = useState<string[]>([]);
+  const [users] = useState<User[]>(initialUsers);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -356,6 +378,86 @@ const AdminManagement = () => {
     );
   };
 
+  const renderUsersTable = () => {
+    const filteredUsers = users.filter(user => {
+      const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.idNumber && user.idNumber.includes(searchQuery));
+      const matchesStatus = statusFilter === 'all' || 
+        (statusFilter === 'active' && user.userStatus === 'active') ||
+        (statusFilter === 'inactive' && user.userStatus !== 'active');
+      return matchesSearch && matchesStatus;
+    });
+
+    return (
+      <div className="bg-card rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="font-medium">ชื่อ นามสกุล</TableHead>
+              <TableHead className="font-medium">โครงการที่ดูแล</TableHead>
+              <TableHead className="font-medium">เลขบัตรประชาชน</TableHead>
+              <TableHead className="font-medium">สถานะผู้ใช้งาน</TableHead>
+              <TableHead className="font-medium">สถานะโครงการ</TableHead>
+              <TableHead className="font-medium">วันที่อัปเดต</TableHead>
+              <TableHead className="font-medium w-16"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredUsers.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.project}</TableCell>
+                <TableCell>{user.idNumber || '-'}</TableCell>
+                <TableCell>
+                  <span className="text-[#22c55e]">
+                    {user.userStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-[#22c55e]">
+                    {user.projectStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                  </span>
+                </TableCell>
+                <TableCell>{user.updatedAt}</TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {filteredUsers.length === 0 && <EmptyState />}
+        {filteredUsers.length > 0 && (
+          <div className="flex items-center justify-end gap-4 px-4 py-3 border-t border-border text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span>จำนวนแถวต่อหน้า :</span>
+              <Select value={rowsPerPage} onValueChange={setRowsPerPage}>
+                <SelectTrigger className="w-16 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <span>{filteredUsers.length} จาก {users.length}</span>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
+                <ChevronDown className="w-4 h-4 rotate-90" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
+                <ChevronDown className="w-4 h-4 -rotate-90" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center py-20">
       <div className="relative mb-6">
@@ -478,7 +580,7 @@ const AdminManagement = () => {
           </TabsContent>
 
           <TabsContent value="users" className="mt-0">
-            {renderAdminTable([])}
+            {renderUsersTable()}
           </TabsContent>
         </Tabs>
 
