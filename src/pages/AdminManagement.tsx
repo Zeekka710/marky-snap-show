@@ -359,7 +359,7 @@ const AdminManagement = () => {
             ))}
           </TableBody>
         </Table>
-        {filteredAdmins.length === 0 && <EmptyState />}
+        {filteredAdmins.length === 0 && emptyStateContent}
         {filteredAdmins.length > 0 && (
           <div className="flex items-center justify-end gap-4 px-4 py-3 border-t border-border text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
@@ -448,7 +448,7 @@ const AdminManagement = () => {
             ))}
           </TableBody>
         </Table>
-        {filteredUsers.length === 0 && <EmptyState />}
+        {filteredUsers.length === 0 && emptyStateContent}
         {filteredUsers.length > 0 && (
           <div className="flex items-center justify-end gap-4 px-4 py-3 border-t border-border text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
@@ -478,7 +478,7 @@ const AdminManagement = () => {
       </div>
     );
   };
-  const EmptyState = () => (
+  const emptyStateContent = (
     <div className="flex flex-col items-center justify-center py-20">
       <div className="relative mb-6">
         <div className="w-24 h-24 bg-muted/50 rounded-xl flex items-center justify-center">
