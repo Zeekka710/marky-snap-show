@@ -78,14 +78,14 @@ const initialCentralAdmins: Admin[] = [
 ];
 
 const initialUsers: User[] = [
-  { id: '1', name: 'Burahan Byh', email: 'burahan.byh@gmail.com', project: 'AI Passport', idNumber: '**********571', birthDate: '15 มี.ค. 2540', gender: 'ชาย', occupation: 'วิศวกร', idCardAddress: '123/45 ถ.สุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพฯ 10110', currentAddress: '789/12 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '9 ม.ค. 2569' },
-  { id: '2', name: 'Chotiwit Souyan', email: 'chotiwit.s@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '22 ก.ค. 2538', gender: 'ชาย', occupation: 'นักพัฒนาซอฟต์แวร์', idCardAddress: '456/78 ถ.พหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ 10900', currentAddress: '456/78 ถ.พหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ 10900', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '8 ม.ค. 2569' },
-  { id: '3', name: 'Nuddanai Klaiklin', email: 'nuddanai.k@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '10 ธ.ค. 2535', gender: 'ชาย', occupation: 'ครู', idCardAddress: '789/01 ถ.ลาดพร้าว แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230', currentAddress: '789/01 ถ.ลาดพร้าว แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Explorer', updatedAt: '31 ธ.ค. 2568' },
-  { id: '4', name: 'xBKLYN', email: 'xbklyn@gmail.com', project: 'AI Passport', idNumber: '**********365', birthDate: '5 ม.ค. 2542', gender: 'ชาย', occupation: 'นักศึกษา', idCardAddress: '321/54 ถ.เพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400', currentAddress: '321/54 ถ.เพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '8 ม.ค. 2569' },
-  { id: '5', name: 'Pongsakorn Rattanapan', email: 'pongsakorn.r@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '18 เม.ย. 2537', gender: 'ชาย', occupation: 'แพทย์', idCardAddress: '654/32 ถ.สีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500', currentAddress: '654/32 ถ.สีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '7 ม.ค. 2569' },
-  { id: '6', name: 'Soraya Chuenwitthaya', email: 'soraya.c@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '25 ก.พ. 2536', gender: 'หญิง', occupation: 'พยาบาล', idCardAddress: '147/25 ถ.วิภาวดีรังสิต แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900', currentAddress: '258/36 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '8 ม.ค. 2569' },
-  { id: '7', name: 'supanon test', email: 'supanon.t@gmail.com', project: 'AI Passport', idNumber: '**********226', birthDate: '30 ส.ค. 2539', gender: 'ชาย', occupation: 'นักบัญชี', idCardAddress: '987/65 ถ.อโศก แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพฯ 10110', currentAddress: '987/65 ถ.อโศก แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพฯ 10110', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Explorer', updatedAt: '7 ม.ค. 2569' },
-  { id: '8', name: 'Bat Thanaphong', email: 'bat.t@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '12 พ.ย. 2541', gender: 'ชาย', occupation: 'นักออกแบบ', idCardAddress: '246/80 ถ.พระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', currentAddress: '246/80 ถ.พระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Pioneer', updatedAt: '9 ม.ค. 2569' },
+  { id: '1', name: 'Burahan Byh', email: 'burahan.byh@gmail.com', project: 'AI Passport', idNumber: '**********571', birthDate: '15 มี.ค. 2540', gender: 'ชาย', occupation: 'วิศวกร', idCardAddress: '123/45 ถ.สุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพฯ 10110', currentAddress: '789/12 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 12 - Elite', updatedAt: '9 ม.ค. 2569' },
+  { id: '2', name: 'Chotiwit Souyan', email: 'chotiwit.s@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '22 ก.ค. 2538', gender: 'ชาย', occupation: 'นักพัฒนาซอฟต์แวร์', idCardAddress: '456/78 ถ.พหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ 10900', currentAddress: '456/78 ถ.พหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ 10900', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 5 - Explorer', updatedAt: '8 ม.ค. 2569' },
+  { id: '3', name: 'Nuddanai Klaiklin', email: 'nuddanai.k@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '10 ธ.ค. 2535', gender: 'ชาย', occupation: 'ครู', idCardAddress: '789/01 ถ.ลาดพร้าว แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230', currentAddress: '789/01 ถ.ลาดพร้าว แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 8 - Pioneer', updatedAt: '31 ธ.ค. 2568' },
+  { id: '4', name: 'xBKLYN', email: 'xbklyn@gmail.com', project: 'AI Passport', idNumber: '**********365', birthDate: '5 ม.ค. 2542', gender: 'ชาย', occupation: 'นักศึกษา', idCardAddress: '321/54 ถ.เพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400', currentAddress: '321/54 ถ.เพชรบุรี แขวงมักกะสัน เขตราชเทวี กรุงเทพฯ 10400', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 2 - Beginner', updatedAt: '8 ม.ค. 2569' },
+  { id: '5', name: 'Pongsakorn Rattanapan', email: 'pongsakorn.r@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '18 เม.ย. 2537', gender: 'ชาย', occupation: 'แพทย์', idCardAddress: '654/32 ถ.สีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500', currentAddress: '654/32 ถ.สีลม แขวงสีลม เขตบางรัก กรุงเทพฯ 10500', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 17 - Mythic', updatedAt: '7 ม.ค. 2569' },
+  { id: '6', name: 'Soraya Chuenwitthaya', email: 'soraya.c@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '25 ก.พ. 2536', gender: 'หญิง', occupation: 'พยาบาล', idCardAddress: '147/25 ถ.วิภาวดีรังสิต แขวงจอมพล เขตจตุจักร กรุงเทพฯ 10900', currentAddress: '258/36 ถ.รัชดาภิเษก แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 14 - Champion', updatedAt: '8 ม.ค. 2569' },
+  { id: '7', name: 'supanon test', email: 'supanon.t@gmail.com', project: 'AI Passport', idNumber: '**********226', birthDate: '30 ส.ค. 2539', gender: 'ชาย', occupation: 'นักบัญชี', idCardAddress: '987/65 ถ.อโศก แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพฯ 10110', currentAddress: '987/65 ถ.อโศก แขวงคลองเตยเหนือ เขตวัฒนา กรุงเทพฯ 10110', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 20 - Ultimate', updatedAt: '7 ม.ค. 2569' },
+  { id: '8', name: 'Bat Thanaphong', email: 'bat.t@gmail.com', project: 'AI Passport', idNumber: null, birthDate: '12 พ.ย. 2541', gender: 'ชาย', occupation: 'นักออกแบบ', idCardAddress: '246/80 ถ.พระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', currentAddress: '246/80 ถ.พระราม 9 แขวงห้วยขวาง เขตห้วยขวาง กรุงเทพฯ 10310', userLevel: 'ผู้ใช้งานทั่วไป', userStatus: 'active', projectStatus: 'active', pdpaVersion: '2.0', tcVersion: '1.0', projectUserLevel: 'Tier 9 - Achiever', updatedAt: '9 ม.ค. 2569' },
 ];
 
 const AdminManagement = () => {
@@ -889,34 +889,7 @@ const AdminManagement = () => {
                       }}
                     >
                       <SelectTrigger className="w-48 h-9">
-                        <div className="flex items-center gap-2">
-                          {(() => {
-                            const tierIcons: Record<string, React.ReactNode> = {
-                              'Tier 1 - Starter': <Leaf className="w-4 h-4 text-green-500" />,
-                              'Tier 2 - Beginner': <Compass className="w-4 h-4 text-blue-400" />,
-                              'Tier 3 - Learner': <Moon className="w-4 h-4 text-indigo-400" />,
-                              'Tier 4 - Seeker': <Sun className="w-4 h-4 text-yellow-500" />,
-                              'Tier 5 - Explorer': <Mountain className="w-4 h-4 text-stone-500" />,
-                              'Tier 6 - Adventurer': <Anchor className="w-4 h-4 text-cyan-500" />,
-                              'Tier 7 - Traveler': <Heart className="w-4 h-4 text-pink-500" />,
-                              'Tier 8 - Pioneer': <Target className="w-4 h-4 text-red-500" />,
-                              'Tier 9 - Achiever': <Medal className="w-4 h-4 text-amber-500" />,
-                              'Tier 10 - Expert': <Award className="w-4 h-4 text-purple-500" />,
-                              'Tier 11 - Master': <Star className="w-4 h-4 text-yellow-400" />,
-                              'Tier 12 - Elite': <Zap className="w-4 h-4 text-orange-500" />,
-                              'Tier 13 - Pro': <Flame className="w-4 h-4 text-red-600" />,
-                              'Tier 14 - Champion': <Trophy className="w-4 h-4 text-amber-600" />,
-                              'Tier 15 - Hero': <Shield className="w-4 h-4 text-blue-600" />,
-                              'Tier 16 - Legend': <Sparkles className="w-4 h-4 text-violet-500" />,
-                              'Tier 17 - Mythic': <Gem className="w-4 h-4 text-emerald-500" />,
-                              'Tier 18 - Divine': <Diamond className="w-4 h-4 text-cyan-400" />,
-                              'Tier 19 - Supreme': <Rocket className="w-4 h-4 text-fuchsia-500" />,
-                              'Tier 20 - Ultimate': <Crown className="w-4 h-4 text-yellow-500" />,
-                            };
-                            return tierIcons[selectedUser.projectUserLevel] || <Shield className="w-4 h-4 text-muted-foreground" />;
-                          })()}
-                          <SelectValue />
-                        </div>
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="max-h-80">
                         <SelectItem value="Tier 1 - Starter">
