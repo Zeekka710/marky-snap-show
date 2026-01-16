@@ -1031,64 +1031,41 @@ const AdminManagement = () => {
                       // Find the original user to compare changes
                       const originalUser = users.find(u => u.id === selectedUser.id);
                       
+                      if (!originalUser) return;
+
+                      const userStatusChanged = originalUser.userStatus !== selectedUser.userStatus;
+                      const projectStatusChanged = originalUser.projectStatus !== selectedUser.projectStatus;
+                      const userLevelChanged = originalUser.projectUserLevel !== selectedUser.projectUserLevel;
+
+                      // If no changes, just close the dialog without toast
+                      if (!userStatusChanged && !projectStatusChanged && !userLevelChanged) {
+                        setIsUserDetailOpen(false);
+                        return;
+                      }
+
                       // Update the user in the list
                       setUsers(prev => prev.map(u => 
                         u.id === selectedUser.id ? selectedUser : u
                       ));
                       setIsUserDetailOpen(false);
 
-                      // Determine appropriate toast message based on changes
-                      if (originalUser) {
-                        const userStatusChanged = originalUser.userStatus !== selectedUser.userStatus;
-                        const projectStatusChanged = originalUser.projectStatus !== selectedUser.projectStatus;
-                        const userLevelChanged = originalUser.projectUserLevel !== selectedUser.projectUserLevel;
-
-                        // Status change toasts
-                        if (userStatusChanged && projectStatusChanged) {
-                          if (selectedUser.userStatus === 'inactive' && selectedUser.projectStatus === 'inactive') {
-                            toast({
-                              title: 'ระงับบัญชีและปิดโครงการสำเร็จ',
-                            });
-                          } else if (selectedUser.userStatus === 'active' && selectedUser.projectStatus === 'active') {
-                            toast({
-                              title: 'เปิดใช้งานบัญชีและเปิดโครงการสำเร็จ',
-                            });
-                          } else {
-                            toast({
-                              title: 'อัปเดตสถานะสำเร็จ',
-                            });
-                          }
-                        } else if (userStatusChanged) {
-                          if (selectedUser.userStatus === 'inactive') {
-                            toast({
-                              title: 'ระงับบัญชีสำเร็จ',
-                            });
-                          } else {
-                            toast({
-                              title: 'เปิดใช้งานบัญชีสำเร็จ',
-                            });
-                          }
-                        } else if (projectStatusChanged) {
-                          if (selectedUser.projectStatus === 'inactive') {
-                            toast({
-                              title: 'ปิดโครงการสำเร็จ',
-                            });
-                          } else {
-                            toast({
-                              title: 'เปิดโครงการสำเร็จ',
-                            });
-                          }
-                        } else if (userLevelChanged) {
-                          toast({
-                            title: `เปลี่ยนระดับผู้ใช้งานเป็น ${selectedUser.projectUserLevel} สำเร็จ`,
-                          });
-                        } else {
-                          toast({
-                            title: 'บันทึกสำเร็จ',
-                            description: 'อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว',
-                          });
-                        }
+                      // Build description based on what changed
+                      const changes: string[] = [];
+                      
+                      if (userStatusChanged) {
+                        changes.push(selectedUser.userStatus === 'inactive' ? 'ระงับบัญชี' : 'เปิดใช้งานบัญชี');
                       }
+                      if (projectStatusChanged) {
+                        changes.push(selectedUser.projectStatus === 'inactive' ? 'ปิดโครงการ' : 'เปิดโครงการ');
+                      }
+                      if (userLevelChanged) {
+                        changes.push(`เปลี่ยนระดับเป็น ${selectedUser.projectUserLevel}`);
+                      }
+
+                      toast({
+                        title: 'อัปเดตสำเร็จ',
+                        description: changes.join(', '),
+                      });
                     }}
                   >
                     ยืนยัน
