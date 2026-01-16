@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet, Eye, MoreVertical, AlertCircle, CheckCircle2, Shield } from 'lucide-react';
+import { Search, Clock, Plus, ChevronDown, Upload, X, FileSpreadsheet, Eye, MoreVertical, AlertCircle, CheckCircle2, Shield, Crown, Star, Gem, Diamond, Zap, Flame, Rocket, Award, Medal, Trophy, Target, Sparkles, Heart, Sun, Moon, Compass, Anchor, Mountain, Leaf } from 'lucide-react';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -888,16 +888,157 @@ const AdminManagement = () => {
                         });
                       }}
                     >
-                      <SelectTrigger className="w-40 h-9">
+                      <SelectTrigger className="w-48 h-9">
                         <div className="flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-muted-foreground" />
+                          {(() => {
+                            const tierIcons: Record<string, React.ReactNode> = {
+                              'Tier 1 - Starter': <Leaf className="w-4 h-4 text-green-500" />,
+                              'Tier 2 - Beginner': <Compass className="w-4 h-4 text-blue-400" />,
+                              'Tier 3 - Learner': <Moon className="w-4 h-4 text-indigo-400" />,
+                              'Tier 4 - Seeker': <Sun className="w-4 h-4 text-yellow-500" />,
+                              'Tier 5 - Explorer': <Mountain className="w-4 h-4 text-stone-500" />,
+                              'Tier 6 - Adventurer': <Anchor className="w-4 h-4 text-cyan-500" />,
+                              'Tier 7 - Traveler': <Heart className="w-4 h-4 text-pink-500" />,
+                              'Tier 8 - Pioneer': <Target className="w-4 h-4 text-red-500" />,
+                              'Tier 9 - Achiever': <Medal className="w-4 h-4 text-amber-500" />,
+                              'Tier 10 - Expert': <Award className="w-4 h-4 text-purple-500" />,
+                              'Tier 11 - Master': <Star className="w-4 h-4 text-yellow-400" />,
+                              'Tier 12 - Elite': <Zap className="w-4 h-4 text-orange-500" />,
+                              'Tier 13 - Pro': <Flame className="w-4 h-4 text-red-600" />,
+                              'Tier 14 - Champion': <Trophy className="w-4 h-4 text-amber-600" />,
+                              'Tier 15 - Hero': <Shield className="w-4 h-4 text-blue-600" />,
+                              'Tier 16 - Legend': <Sparkles className="w-4 h-4 text-violet-500" />,
+                              'Tier 17 - Mythic': <Gem className="w-4 h-4 text-emerald-500" />,
+                              'Tier 18 - Divine': <Diamond className="w-4 h-4 text-cyan-400" />,
+                              'Tier 19 - Supreme': <Rocket className="w-4 h-4 text-fuchsia-500" />,
+                              'Tier 20 - Ultimate': <Crown className="w-4 h-4 text-yellow-500" />,
+                            };
+                            return tierIcons[selectedUser.projectUserLevel] || <Shield className="w-4 h-4 text-muted-foreground" />;
+                          })()}
                           <SelectValue />
                         </div>
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Pioneer">Pioneer</SelectItem>
-                        <SelectItem value="Explorer">Explorer</SelectItem>
-                        <SelectItem value="Member">Member</SelectItem>
+                      <SelectContent className="max-h-80">
+                        <SelectItem value="Tier 1 - Starter">
+                          <div className="flex items-center gap-2">
+                            <Leaf className="w-4 h-4 text-green-500" />
+                            <span>Tier 1 - Starter</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 2 - Beginner">
+                          <div className="flex items-center gap-2">
+                            <Compass className="w-4 h-4 text-blue-400" />
+                            <span>Tier 2 - Beginner</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 3 - Learner">
+                          <div className="flex items-center gap-2">
+                            <Moon className="w-4 h-4 text-indigo-400" />
+                            <span>Tier 3 - Learner</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 4 - Seeker">
+                          <div className="flex items-center gap-2">
+                            <Sun className="w-4 h-4 text-yellow-500" />
+                            <span>Tier 4 - Seeker</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 5 - Explorer">
+                          <div className="flex items-center gap-2">
+                            <Mountain className="w-4 h-4 text-stone-500" />
+                            <span>Tier 5 - Explorer</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 6 - Adventurer">
+                          <div className="flex items-center gap-2">
+                            <Anchor className="w-4 h-4 text-cyan-500" />
+                            <span>Tier 6 - Adventurer</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 7 - Traveler">
+                          <div className="flex items-center gap-2">
+                            <Heart className="w-4 h-4 text-pink-500" />
+                            <span>Tier 7 - Traveler</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 8 - Pioneer">
+                          <div className="flex items-center gap-2">
+                            <Target className="w-4 h-4 text-red-500" />
+                            <span>Tier 8 - Pioneer</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 9 - Achiever">
+                          <div className="flex items-center gap-2">
+                            <Medal className="w-4 h-4 text-amber-500" />
+                            <span>Tier 9 - Achiever</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 10 - Expert">
+                          <div className="flex items-center gap-2">
+                            <Award className="w-4 h-4 text-purple-500" />
+                            <span>Tier 10 - Expert</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 11 - Master">
+                          <div className="flex items-center gap-2">
+                            <Star className="w-4 h-4 text-yellow-400" />
+                            <span>Tier 11 - Master</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 12 - Elite">
+                          <div className="flex items-center gap-2">
+                            <Zap className="w-4 h-4 text-orange-500" />
+                            <span>Tier 12 - Elite</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 13 - Pro">
+                          <div className="flex items-center gap-2">
+                            <Flame className="w-4 h-4 text-red-600" />
+                            <span>Tier 13 - Pro</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 14 - Champion">
+                          <div className="flex items-center gap-2">
+                            <Trophy className="w-4 h-4 text-amber-600" />
+                            <span>Tier 14 - Champion</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 15 - Hero">
+                          <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4 text-blue-600" />
+                            <span>Tier 15 - Hero</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 16 - Legend">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-violet-500" />
+                            <span>Tier 16 - Legend</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 17 - Mythic">
+                          <div className="flex items-center gap-2">
+                            <Gem className="w-4 h-4 text-emerald-500" />
+                            <span>Tier 17 - Mythic</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 18 - Divine">
+                          <div className="flex items-center gap-2">
+                            <Diamond className="w-4 h-4 text-cyan-400" />
+                            <span>Tier 18 - Divine</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 19 - Supreme">
+                          <div className="flex items-center gap-2">
+                            <Rocket className="w-4 h-4 text-fuchsia-500" />
+                            <span>Tier 19 - Supreme</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="Tier 20 - Ultimate">
+                          <div className="flex items-center gap-2">
+                            <Crown className="w-4 h-4 text-yellow-500" />
+                            <span>Tier 20 - Ultimate</span>
+                          </div>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
