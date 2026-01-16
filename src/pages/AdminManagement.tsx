@@ -421,13 +421,13 @@ const AdminManagement = () => {
                 <TableCell>{user.project}</TableCell>
                 <TableCell>{user.idNumber || '-'}</TableCell>
                 <TableCell>
-                  <span className="text-[#22c55e]">
-                    {user.userStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                  <span className={user.userStatus === 'active' ? 'text-[#22c55e]' : 'text-destructive'}>
+                    {user.userStatus === 'active' ? 'กำลังใช้งาน' : 'ระงับการใช้งาน'}
                   </span>
                 </TableCell>
                 <TableCell>
-                  <span className="text-[#22c55e]">
-                    {user.projectStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                  <span className={user.projectStatus === 'active' ? 'text-[#22c55e]' : 'text-destructive'}>
+                    {user.projectStatus === 'active' ? 'กำลังใช้งาน' : 'ระงับการใช้งาน'}
                   </span>
                 </TableCell>
                 <TableCell>{user.updatedAt}</TableCell>
@@ -814,8 +814,8 @@ const AdminManagement = () => {
                   <div className="flex justify-between items-center py-2 border-b border-border/50">
                     <span className="text-muted-foreground">สถานะผู้ใช้งาน</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-[#22c55e]">
-                        {selectedUser.userStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                      <span className={selectedUser.userStatus === 'active' ? 'text-[#22c55e]' : 'text-destructive'}>
+                        {selectedUser.userStatus === 'active' ? 'กำลังใช้งาน' : 'ระงับการใช้งาน'}
                       </span>
                       <div 
                         className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${
@@ -855,8 +855,8 @@ const AdminManagement = () => {
                   <div className="flex justify-between items-center py-2 border-b border-border/50">
                     <span className="text-muted-foreground">สถานะโครงการ</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-[#22c55e]">
-                        {selectedUser.projectStatus === 'active' ? 'กำลังใช้งาน' : 'ไม่ใช้งาน'}
+                      <span className={selectedUser.projectStatus === 'active' ? 'text-[#22c55e]' : 'text-destructive'}>
+                        {selectedUser.projectStatus === 'active' ? 'กำลังใช้งาน' : 'ระงับการใช้งาน'}
                       </span>
                       <div 
                         className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${
@@ -914,15 +914,67 @@ const AdminManagement = () => {
                   </Button>
                   <Button 
                     onClick={() => {
+                      // Find the original user to compare changes
+                      const originalUser = users.find(u => u.id === selectedUser.id);
+                      
                       // Update the user in the list
                       setUsers(prev => prev.map(u => 
                         u.id === selectedUser.id ? selectedUser : u
                       ));
                       setIsUserDetailOpen(false);
-                      toast({
-                        title: 'บันทึกสำเร็จ',
-                        description: 'อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว',
-                      });
+
+                      // Determine appropriate toast message based on changes
+                      if (originalUser) {
+                        const userStatusChanged = originalUser.userStatus !== selectedUser.userStatus;
+                        const projectStatusChanged = originalUser.projectStatus !== selectedUser.projectStatus;
+                        const userLevelChanged = originalUser.projectUserLevel !== selectedUser.projectUserLevel;
+
+                        // Status change toasts
+                        if (userStatusChanged && projectStatusChanged) {
+                          if (selectedUser.userStatus === 'inactive' && selectedUser.projectStatus === 'inactive') {
+                            toast({
+                              title: 'ระงับบัญชีและปิดโครงการสำเร็จ',
+                            });
+                          } else if (selectedUser.userStatus === 'active' && selectedUser.projectStatus === 'active') {
+                            toast({
+                              title: 'เปิดใช้งานบัญชีและเปิดโครงการสำเร็จ',
+                            });
+                          } else {
+                            toast({
+                              title: 'อัปเดตสถานะสำเร็จ',
+                            });
+                          }
+                        } else if (userStatusChanged) {
+                          if (selectedUser.userStatus === 'inactive') {
+                            toast({
+                              title: 'ระงับบัญชีสำเร็จ',
+                            });
+                          } else {
+                            toast({
+                              title: 'เปิดใช้งานบัญชีสำเร็จ',
+                            });
+                          }
+                        } else if (projectStatusChanged) {
+                          if (selectedUser.projectStatus === 'inactive') {
+                            toast({
+                              title: 'ปิดโครงการสำเร็จ',
+                            });
+                          } else {
+                            toast({
+                              title: 'เปิดโครงการสำเร็จ',
+                            });
+                          }
+                        } else if (userLevelChanged) {
+                          toast({
+                            title: `เปลี่ยนระดับผู้ใช้งานเป็น ${selectedUser.projectUserLevel} สำเร็จ`,
+                          });
+                        } else {
+                          toast({
+                            title: 'บันทึกสำเร็จ',
+                            description: 'อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว',
+                          });
+                        }
+                      }
                     }}
                   >
                     ยืนยัน
